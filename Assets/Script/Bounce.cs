@@ -10,16 +10,17 @@ public class Bounce : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		speed = GetComponent <Rigidbody2D> ().velocity.y;
-		UpEdge = Camera.main.orthographicSize * Screen.height / Screen.width;
+		UpEdge = Screen.height;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		Vector3 tempos = Camera.main.WorldToScreenPoint (transform.position);
 		if (!dirUp){
 			transform.Translate (-Vector2.up * speed * Time.deltaTime * 2);
 		}
 			
-		if(transform.position.y >= UpEdge) {
+		if(tempos.y >= UpEdge) {
 			dirUp = false;
 		}
 	}
