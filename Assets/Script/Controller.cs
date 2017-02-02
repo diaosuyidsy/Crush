@@ -38,13 +38,13 @@ public class Controller : MonoBehaviour {
 			Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
 			rb.velocity = new Vector2 (0, bulletSpeed);
 		}
-		if(Input.GetButtonDown ("E") && lock2){
+		if(Input.GetButtonDown ("W") && lock2){
 			lock2 = false;
 			GameObject bullet1 = (GameObject) Instantiate (bullet,launcher2.position,Quaternion.identity);
 			Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
 			rb.velocity = new Vector2 (0, bulletSpeed);
 		}
-		if(Input.GetButtonDown ("W") && lock3){
+		if(Input.GetButtonDown ("E") && lock3){
 			lock3 = false;
 			GameObject bullet1 = (GameObject) Instantiate (bullet,launcher3.position,Quaternion.identity);
 			Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
@@ -63,7 +63,7 @@ public class Controller : MonoBehaviour {
 
 	}
 
-	void CalculateScore(){
+	private void CalculateScore(){
 		float score = 0;
 		float lasti = timeContainer [0];
 		foreach(float i in timeContainer){
@@ -72,12 +72,16 @@ public class Controller : MonoBehaviour {
 		}
 		Debug.Log ("Final Score: " + (100f - score * 100));
 		float finalScore = 100f - score * 100;
-		if(finalScore>80){
+		if(finalScore>84){
 			ThreeStar.SetActive (true);
 		}else if(finalScore > 60){
 			TwoStar.SetActive (true);
 		}else{
 			OneStar.SetActive (true);
 		}
+	}
+
+	void FailLevel(){
+		
 	}
 }
