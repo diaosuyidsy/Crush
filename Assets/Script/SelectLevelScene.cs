@@ -15,6 +15,9 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 #endregion // Namespaces
 
@@ -120,6 +123,10 @@ public class SelectLevelScene : MonoBehaviour
 
 		// MoveIn buttons to next levels
 		to_Right.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+		// Get the star and Level according to playerprefs
+		GetLevelSetup (m_Dialog1);
+
 		
 		// Enable all scene switch buttons
 		StartCoroutine(EnableAllDemoButtons());
@@ -148,7 +155,25 @@ public class SelectLevelScene : MonoBehaviour
 	}
 	
 	#endregion // MoveIn/MoveOut
-	
+
+	#region Get Level Data
+
+
+	// Get Star setup
+	void GetLevelSetup(GUIAnimFREE Dialog)
+	{
+		int levelnum = Dialog.GetComponentInParent<LevelInfo>().GetLevelNumber ();
+
+		Dictionary<int, Level> levelBook = GameData.gd.Load ();
+		if(levelBook != null){
+			int starNum = levelBook [levelnum].starNum;
+			Dialog.GetComponentInParent<LevelInfo>().Enable_Stars (starNum);
+		}
+	}
+
+
+	#endregion
+
 	// ########################################
 	// Enable/Disable button functions
 	// ########################################
@@ -184,7 +209,15 @@ public class SelectLevelScene : MonoBehaviour
 	// ########################################
 	
 	#region UI Responder
-	
+
+	public void OnButton_Dialog(int llevelnum)
+	{
+		GUIAnimFREE currentGUI = EventSystem.current.currentSelectedGameObject.GetComponent<GUIAnimFREE> ();
+		currentGUI.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+		StartCoroutine (Load_Level (llevelnum));
+	}
+
 	public void OnButton_Dialog1()
 	{			
 		// MoveOut m_Dialog1
@@ -192,9 +225,12 @@ public class SelectLevelScene : MonoBehaviour
 		
 		// Disable m_Dialog1 for a few seconds
 		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
 		
 		// MoveIn m_Dialog1
-		StartCoroutine(Dialog1_MoveIn());
 	}
 	
 	public void OnButton_Dialog2()
@@ -203,8 +239,11 @@ public class SelectLevelScene : MonoBehaviour
 		m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Disable m_Dialog2 for a few seconds
+		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
 		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
-		
+		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
 		// MoveIn m_Dialog2
 		StartCoroutine(Dialog2_MoveIn());
 	}
@@ -215,8 +254,11 @@ public class SelectLevelScene : MonoBehaviour
 		m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Disable m_Dialog3 for a few seconds
+		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
 		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
-		
+		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
 		// MoveIn m_Dialog3
 		StartCoroutine(Dialog3_MoveIn());
 	}
@@ -227,8 +269,11 @@ public class SelectLevelScene : MonoBehaviour
 		m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Disable m_Dialog4 for a few seconds
+		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
 		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
-		
+		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
 		// MoveIn m_Dialog4
 		StartCoroutine(Dialog4_MoveIn());
 	}
@@ -240,12 +285,14 @@ public class SelectLevelScene : MonoBehaviour
 		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
 		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
 		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
+		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
 
 		// MoveOut dialogs
 		m_Dialog1.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		to_Right.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Move dialogs back to screen with Coroutines
 		StartCoroutine(Dialog1_MoveIn());
@@ -255,6 +302,18 @@ public class SelectLevelScene : MonoBehaviour
 	}
 	
 	#endregion // UI Responder
+
+	#region Load Scene
+
+	IEnumerator Load_Level(int levelNum)
+	{
+		yield return new WaitForSeconds (1f);
+
+		SceneManager.LoadScene (levelNum + 1);
+	}
+
+
+	#endregion
 	
 	// ########################################
 	// Move dialog functions

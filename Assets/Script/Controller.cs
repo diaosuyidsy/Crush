@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Controller : MonoBehaviour {
 
+	public int LevelNum;
+
 	public Transform launcher1;
 	public Transform launcher2;
 	public Transform launcher3;
@@ -14,9 +16,13 @@ public class Controller : MonoBehaviour {
 
 	public GameObject explode;
 
-	public GameObject OneStar;
-	public GameObject TwoStar;
-	public GameObject ThreeStar;
+	public GUIAnimFREE FirstStar;
+	public GUIAnimFREE SecondStar;
+	public GUIAnimFREE ThirdStar;
+
+	public GUIAnimFREE Level_Clear_Panel;
+	public GUIAnimFREE Level_Fail_Panel;
+	public GameObject Need_Disable_When_Win;
 
 	private bool lock1=true;
 	private bool lock2=true;
@@ -64,6 +70,10 @@ public class Controller : MonoBehaviour {
 	}
 
 	private void CalculateScore(){
+		// Enable Level Clear panel
+		// Disable Pause Button
+		Need_Disable_When_Win.SetActive (false);
+
 		float score = 0;
 		float lasti = timeContainer [0];
 		foreach(float i in timeContainer){
@@ -72,16 +82,39 @@ public class Controller : MonoBehaviour {
 		}
 		Debug.Log ("Final Score: " + (100f - score * 100));
 		float finalScore = 100f - score * 100;
-		if(finalScore>84){
-			ThreeStar.SetActive (true);
-		}else if(finalScore > 60){
-			TwoStar.SetActive (true);
+		if(finalScore > 40){
+			PassLevel (finalScore);
 		}else{
-			OneStar.SetActive (true);
+			FailLevel ();
 		}
 	}
 
+	void PassLevel(float final_score)
+	{
+		int starnum = 1;
+		Level_Clear_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		if(final_score > 84){
+			starnum = 3;
+			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
+			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
+			ThirdStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
+		}else if(final_score > 60){
+			starnum = 2;
+			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
+			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
+		}else if(final_score > 40){
+			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
+		}
+		Save (final_score, starnum);
+	}
+
 	void FailLevel(){
-		
+		Level_Fail_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+	}
+
+	void Save(float final_score, int starnum)
+	{
+		GameData.gd.setLevelInfo (LevelNum, starnum, final_score);
+		GameData.gd.Save ();
 	}
 }
