@@ -7,11 +7,20 @@ using System.Collections.Generic;
 
 public class GameData : MonoBehaviour {
 
+	#region Variable Declaration
+
 	public static GameData gd;
 
 	public int levelNum;
 	public int starNum;
 	public float score;
+
+	public int Level_Select_Pointer;
+
+	public int max_Level_Select_Pointer;
+	public int min_Level_Select_Pointer;
+
+	#endregion
 
 	void Awake()
 	{
@@ -44,14 +53,8 @@ public class GameData : MonoBehaviour {
 			FileStream file1 = File.Open (Application.persistentDataPath + "/levelinfo.dat", FileMode.Open);
 			// If there is a level named levelname, try to update the starNum and score if it's higher
 			if(levels.LevelBook.ContainsKey (levelNum)){
-//				levels.LevelBook [levelNum].score = levels.LevelBook [levelNum].score < score ? score : levels.LevelBook [levelNum].score;
-//				levels.LevelBook [levelNum].starNum = levels.LevelBook [levelNum].starNum < starNum ? starNum : levels.LevelBook [levelNum].starNum;
-				if(levels.LevelBook[levelNum].starNum >= this.starNum)
-				{
-				}else
-				{
-					levels.LevelBook [levelNum].starNum = this.starNum;
-				}
+				levels.LevelBook [levelNum].score = levels.LevelBook [levelNum].score < score ? score : levels.LevelBook [levelNum].score;
+				levels.LevelBook [levelNum].starNum = levels.LevelBook [levelNum].starNum < starNum ? starNum : levels.LevelBook [levelNum].starNum;
 			}else{
 				// If there is no level, then create one
 				Level curLevel = new Level ();
@@ -59,6 +62,8 @@ public class GameData : MonoBehaviour {
 				curLevel.score = this.score;
 				levels.LevelBook [levelNum] = curLevel;
 			}
+
+
 
 			// Save the levels to file
 			bf.Serialize (file1, levels);

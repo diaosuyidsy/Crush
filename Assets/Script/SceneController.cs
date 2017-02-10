@@ -163,11 +163,13 @@ public class SceneController : MonoBehaviour
 
 	public void OnButton_Home()
 	{
+		Debug.Log ("Home clicked");
 		SceneManager.LoadScene ("StartScene");
 	}
 
 	public void OnButton_Restart()
 	{
+		Debug.Log ("Restart clicked");
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 	}
 

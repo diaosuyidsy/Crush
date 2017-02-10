@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class collide : MonoBehaviour {
 
@@ -10,8 +11,15 @@ public class collide : MonoBehaviour {
 			Instantiate (explode, this.transform.position, Quaternion.identity );
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", Time.time);
 			Destroy (other.gameObject);
-			Destroy (this.gameObject);
+			StartCoroutine (destroy_this (this.gameObject, 0.2f));
 		}
-
 	}
+
+	IEnumerator destroy_this(GameObject GO, float wait_time)
+	{
+		yield return new WaitForSeconds (wait_time);
+
+		Destroy (GO);
+	}
+
 }

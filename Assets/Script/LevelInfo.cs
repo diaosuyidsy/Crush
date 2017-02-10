@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
+// #############################
+// Note this script is attached to the different level button in select level scene
+// #############################
 public class LevelInfo : MonoBehaviour {
 
 	public int LevelNumber;
@@ -18,6 +22,9 @@ public class LevelInfo : MonoBehaviour {
 	{
 		switch (StarNum)
 		{
+		case 0:
+			GetComponent<Button> ().interactable = true;
+			break;
 		case 1:
 			Enable_One ();
 			break;

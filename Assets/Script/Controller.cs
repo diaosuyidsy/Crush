@@ -116,5 +116,7 @@ public class Controller : MonoBehaviour {
 	{
 		GameData.gd.setLevelInfo (LevelNum, starnum, final_score);
 		GameData.gd.Save ();
+		GameData.gd.setLevelInfo (LevelNum + 1, 0, 0);
+		GameData.gd.Save ();
 	}
 }

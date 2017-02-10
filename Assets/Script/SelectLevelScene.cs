@@ -18,6 +18,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 #endregion // Namespaces
 
@@ -51,6 +52,10 @@ public class SelectLevelScene : MonoBehaviour
 	public GUIAnimFREE m_Dialog4;
 
 	public GUIAnimFREE to_Right;
+	public GUIAnimFREE to_Left;
+
+	private GameObject[] Level_List;
+	private Dictionary<int, GUIAnimFREE> Level_HashMap;
 	
 	#endregion // Variables
 	
@@ -76,6 +81,14 @@ public class SelectLevelScene : MonoBehaviour
 	// http://docs.unity3d.com/ScriptReference/MonoBehaviour.Start.html
 	void Start ()
 	{
+		Level_List = GameObject.FindGameObjectsWithTag ("Level_Select_Button");
+		Level_HashMap = new Dictionary<int, GUIAnimFREE> ();
+
+		foreach(GameObject O in Level_List)
+		{
+			Level_HashMap [O.GetComponent<LevelInfo> ().LevelNumber] = O.GetComponent<GUIAnimFREE> ();
+		}
+
 		// MoveIn m_Title1 and m_Title2
 		StartCoroutine(MoveInTitleGameObjects());
 
@@ -123,11 +136,35 @@ public class SelectLevelScene : MonoBehaviour
 
 		// MoveIn buttons to next levels
 		to_Right.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		to_Left.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 
 		// Get the star and Level according to playerprefs
 		GetLevelSetup (m_Dialog1);
+		GetLevelSetup (m_Dialog2);
+		GetLevelSetup (m_Dialog3);
+		GetLevelSetup (m_Dialog4);
 
 		
+		// Enable all scene switch buttons
+		StartCoroutine(EnableAllDemoButtons());
+	}
+
+	IEnumerator MoveInPrimaryButtonsExceptToleftAndRight()
+	{
+		yield return new WaitForSeconds(1.0f);
+
+		// MoveIn dialogs
+		m_Dialog1.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);	
+		m_Dialog2.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);	
+		m_Dialog3.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);	
+		m_Dialog4.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+		// Get the star and Level according to playerprefs
+		GetLevelSetup (m_Dialog1);
+		GetLevelSetup (m_Dialog2);
+		GetLevelSetup (m_Dialog3);
+		GetLevelSetup (m_Dialog4);
+
 		// Enable all scene switch buttons
 		StartCoroutine(EnableAllDemoButtons());
 	}
@@ -166,8 +203,12 @@ public class SelectLevelScene : MonoBehaviour
 
 		Dictionary<int, Level> levelBook = GameData.gd.Load ();
 		if(levelBook != null){
-			int starNum = levelBook [levelnum].starNum;
-			Dialog.GetComponentInParent<LevelInfo>().Enable_Stars (starNum);
+			if(levelBook.ContainsKey (levelnum))
+			{
+				int starNum = levelBook [levelnum].starNum;
+				Dialog.GetComponentInParent<LevelInfo>().Enable_Stars (starNum);
+			}
+
 		}
 	}
 
@@ -195,7 +236,7 @@ public class SelectLevelScene : MonoBehaviour
 	{
 		// Disable all buttons
 		GUIAnimSystemFREE.Instance.EnableButton(GO.transform, false);
-		
+
 		yield return new WaitForSeconds(DisableTime);
 		
 		// Enable all buttons
@@ -208,97 +249,92 @@ public class SelectLevelScene : MonoBehaviour
 	// UI Responder functions
 	// ########################################
 	
-	#region UI Responder
+	#region On Button
 
 	public void OnButton_Dialog(int llevelnum)
 	{
 		GUIAnimFREE currentGUI = EventSystem.current.currentSelectedGameObject.GetComponent<GUIAnimFREE> ();
 		currentGUI.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 
-		StartCoroutine (Load_Level (llevelnum));
-	}
-
-	public void OnButton_Dialog1()
-	{			
-		// MoveOut m_Dialog1
-		m_Dialog1.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		
 		// Disable m_Dialog1 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
-		
-		// MoveIn m_Dialog1
-	}
-	
-	public void OnButton_Dialog2()
-	{
-		// MoveOut m_Dialog2
-		m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		
-		// Disable m_Dialog2 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
-		// MoveIn m_Dialog2
-		StartCoroutine(Dialog2_MoveIn());
-	}
-	
-	public void OnButton_Dialog3()
-	{
-		// MoveOut m_Dialog3
-		m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		
-		// Disable m_Dialog3 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
-		// MoveIn m_Dialog3
-		StartCoroutine(Dialog3_MoveIn());
-	}
-	
-	public void OnButton_Dialog4()
-	{
-		// MoveOut m_Dialog4
-		m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		
-		// Disable m_Dialog4 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
-		// MoveIn m_Dialog4
-		StartCoroutine(Dialog4_MoveIn());
+//		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
+//		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
+//		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
+//		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
+//		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
+//		StartCoroutine(DisableButtonForSeconds(to_Left.gameObject, 2.5f));
+
+		StartCoroutine (Load_Level (llevelnum));
 	}
 	
 	public void OnButton_MoveOutAllDialogs()
 	{		
-		// Disable m_Dialog1, m_Dialog2, m_Dialog3, m_Dialog4 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.5f));
-		StartCoroutine(DisableButtonForSeconds(to_Right.gameObject, 2.5f));
-
 		// MoveOut dialogs
 		m_Dialog1.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		to_Right.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		
-		// Move dialogs back to screen with Coroutines
-		StartCoroutine(Dialog1_MoveIn());
-		StartCoroutine(Dialog2_MoveIn());
-		StartCoroutine(Dialog3_MoveIn());
-		StartCoroutine(Dialog4_MoveIn());
+	}
+
+	// When to right button is clicked
+	public void OnButton_ToRight()
+	{
+		// If the pointer is not pointed to the last level I have
+		// Then get the next 4 levels
+		if(GameData.gd.Level_Select_Pointer < GameData.gd.max_Level_Select_Pointer)
+		{
+			//Set the To Left Button Enabled
+			if(to_Left.gameObject.GetComponent <Button> ().interactable == false)
+			{
+				to_Left.gameObject.GetComponent <Button> ().interactable = true;
+			}
+
+
+			OnButton_MoveOutAllDialogs ();
+
+			m_Dialog1 = Level_HashMap [++GameData.gd.Level_Select_Pointer];
+			m_Dialog2 = Level_HashMap [++GameData.gd.Level_Select_Pointer];
+			m_Dialog3 = Level_HashMap [++GameData.gd.Level_Select_Pointer];
+			m_Dialog4 = Level_HashMap [++GameData.gd.Level_Select_Pointer];
+
+			StartCoroutine (MoveInPrimaryButtonsExceptToleftAndRight ());
+
+			// If we reached the end of the Levels I have, disable to right
+			if(GameData.gd.Level_Select_Pointer >= GameData.gd.max_Level_Select_Pointer)
+			{
+				to_Right.gameObject.GetComponent <Button> ().interactable = false;
+			}
+		}
+
+	}
+
+	public void OnButton_ToLeft()
+	{
+		// If the pointer is not pointed to the last level I have
+		// Then get the last 4 levels
+		if(GameData.gd.Level_Select_Pointer > GameData.gd.min_Level_Select_Pointer)
+		{
+			//Set the To Right Button Enabled
+			if(to_Right.gameObject.GetComponent <Button> ().interactable == false)
+			{
+				to_Right.gameObject.GetComponent <Button> ().interactable = true;
+			}
+
+			OnButton_MoveOutAllDialogs ();
+
+			m_Dialog1 = Level_HashMap [(--GameData.gd.Level_Select_Pointer) - 3];
+			m_Dialog2 = Level_HashMap [(--GameData.gd.Level_Select_Pointer) - 3];
+			m_Dialog3 = Level_HashMap [(--GameData.gd.Level_Select_Pointer) - 3];
+			m_Dialog4 = Level_HashMap [(--GameData.gd.Level_Select_Pointer) - 3];
+
+			StartCoroutine (MoveInPrimaryButtonsExceptToleftAndRight ());
+
+			// If we reached the end of the Levels I have, disable to right
+			if(GameData.gd.Level_Select_Pointer <= GameData.gd.min_Level_Select_Pointer)
+			{
+				to_Left.gameObject.GetComponent <Button> ().interactable = false;
+			}
+		}
 	}
 	
 	#endregion // UI Responder
