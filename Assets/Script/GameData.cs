@@ -42,6 +42,28 @@ public class GameData : MonoBehaviour {
 		score = finalscore;
 	}
 
+	private void save_coin(Levels levels)
+	{
+		// Save Coin for player
+		if(starNum > levels.LevelBook [levelNum].starNum)
+		{
+			Debug.Log ("entered");
+			int temp = levels.Gold_Coin;
+			Debug.Log (temp);
+			if(starNum == 2)
+			{
+				Debug.Log ("Added 1");
+				temp += 1;
+			}
+			if(starNum == 3)
+			{
+				Debug.Log ("Added 3");
+				temp += 3;
+			}
+			levels.Gold_Coin = temp;
+		}
+		Debug.Log ("Now player Coin: " + levels.Gold_Coin);
+	}
 
 	public void Save()
 	{
@@ -53,18 +75,18 @@ public class GameData : MonoBehaviour {
 			FileStream file1 = File.Open (Application.persistentDataPath + "/levelinfo.dat", FileMode.Open);
 			// If there is a level named levelname, try to update the starNum and score if it's higher
 			if(levels.LevelBook.ContainsKey (levelNum)){
+				save_coin (levels);
 				levels.LevelBook [levelNum].score = levels.LevelBook [levelNum].score < score ? score : levels.LevelBook [levelNum].score;
 				levels.LevelBook [levelNum].starNum = levels.LevelBook [levelNum].starNum < starNum ? starNum : levels.LevelBook [levelNum].starNum;
+
 			}else{
 				// If there is no level, then create one
-				Level curLevel = new Level ();
-				curLevel.starNum = this.starNum;
-				curLevel.score = this.score;
-				levels.LevelBook [levelNum] = curLevel;
+				levels.LevelBook [levelNum] = new Level();
+				save_coin (levels);
+				levels.LevelBook [levelNum].starNum = this.starNum;
+				levels.LevelBook [levelNum].score = this.score;
+
 			}
-
-
-
 			// Save the levels to file
 			bf.Serialize (file1, levels);
 			file1.Close ();
@@ -73,11 +95,12 @@ public class GameData : MonoBehaviour {
 			FileStream file = File.Create (Application.persistentDataPath + "/levelinfo.dat");
 			Levels levels = new Levels();
 
-			Level curLevel = new Level ();
-			curLevel.starNum = this.starNum;
-			curLevel.score = this.score;
 			levels.LevelBook = new Dictionary<int, Level>();
-			levels.LevelBook [levelNum] = curLevel;
+			levels.LevelBook [levelNum] = new Level();
+			save_coin (levels);
+			levels.LevelBook [levelNum].starNum = this.starNum;
+			levels.LevelBook [levelNum].score = this.score;
+
 			// Save the levels to file
 			bf.Serialize (file, levels);
 			file.Close ();
@@ -103,7 +126,7 @@ public class GameData : MonoBehaviour {
 public class Levels
 {
 	public Dictionary<int, Level> LevelBook;
-
+	public int Gold_Coin;
 }
 
 [Serializable]

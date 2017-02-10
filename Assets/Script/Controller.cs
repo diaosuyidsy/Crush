@@ -62,7 +62,6 @@ public class Controller : MonoBehaviour {
 	void Score(float time){
 		timeContainer.Add (time);
 		countForLevel++;
-		Debug.Log ("receice time: " + time + "count = : " + countForLevel);
 		if(countForLevel==3){
 			CalculateScore ();
 		}
