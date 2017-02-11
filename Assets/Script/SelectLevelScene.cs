@@ -201,7 +201,7 @@ public class SelectLevelScene : MonoBehaviour
 	{
 		int levelnum = Dialog.GetComponentInParent<LevelInfo>().GetLevelNumber ();
 
-		Dictionary<int, Level> levelBook = GameData.gd.Load ();
+		Dictionary<int, Level> levelBook = GameData.gd.Load ().LevelBook;
 		if(levelBook != null){
 			if(levelBook.ContainsKey (levelnum))
 			{

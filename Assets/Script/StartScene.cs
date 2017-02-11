@@ -320,13 +320,12 @@ public class StartScene : MonoBehaviour
 	// MoveIn m_Dialog4
 	IEnumerator Dialog4_MoveIn()
 	{
-		yield return new WaitForSeconds(1.5f);
+		yield return new WaitForSeconds(0.8f);
 		
 		// Reset children of m_Dialog4
-		m_Dialog4.ResetAllChildren();
-		
+
 		// Moves m_Dialog1 back to screen to screen
-		m_Dialog4.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		SceneManager.LoadScene ("Shop");
 	}
 	
 	#endregion // Move Dialog
