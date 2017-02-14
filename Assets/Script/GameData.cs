@@ -46,7 +46,7 @@ public class GameData : MonoBehaviour {
 
 	public void setLevelInfo(int LevelNum, int star, float finalscore)
 	{
-		setLevelInfo (levelNum, star, finalscore, 0);
+		setLevelInfo (LevelNum, star, finalscore, 0);
 	}
 
 	private void save_coin(Levels levels)
@@ -139,7 +139,6 @@ public class GameData : MonoBehaviour {
 				Item this_item = new Item (item_price, isequipped);
 				shop.items [item_name] = this_item;
 			}
-
 			bf.Serialize (file1, shop);
 			file1.Close ();
 		}else{

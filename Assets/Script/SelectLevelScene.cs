@@ -200,15 +200,17 @@ public class SelectLevelScene : MonoBehaviour
 	void GetLevelSetup(GUIAnimFREE Dialog)
 	{
 		int levelnum = Dialog.GetComponentInParent<LevelInfo>().GetLevelNumber ();
-
-		Dictionary<int, Level> levelBook = GameData.gd.Load ().LevelBook;
-		if(levelBook != null){
-			if(levelBook.ContainsKey (levelnum))
-			{
-				int starNum = levelBook [levelnum].starNum;
-				Dialog.GetComponentInParent<LevelInfo>().Enable_Stars (starNum);
+		Levels levels = GameData.gd.Load ();
+		if(levels != null)
+		{
+			Dictionary<int, Level> levelBook = GameData.gd.Load ().LevelBook;
+			if(levelBook != null){
+				if(levelBook.ContainsKey (levelnum))
+				{
+					int starNum = levelBook [levelnum].starNum;
+					Dialog.GetComponentInParent<LevelInfo>().Enable_Stars (starNum);
+				}
 			}
-
 		}
 	}
 
