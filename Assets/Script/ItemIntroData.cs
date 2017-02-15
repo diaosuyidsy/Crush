@@ -14,6 +14,7 @@ public class ItemIntroData : MonoBehaviour {
 	public Text buy_text2;
 	public bool is_bought;
 	public bool is_equipped;
+	public GameObject replacing_object;
 
 	#endregion
 }

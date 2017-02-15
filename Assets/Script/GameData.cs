@@ -139,6 +139,10 @@ public class GameData : MonoBehaviour {
 				Item this_item = new Item (item_price, isequipped);
 				shop.items [item_name] = this_item;
 			}
+			if(isequipped)
+			{
+				shop.last_equipped_item = item_name;
+			}
 			bf.Serialize (file1, shop);
 			file1.Close ();
 		}else{
@@ -148,7 +152,10 @@ public class GameData : MonoBehaviour {
 			shop.items = new Dictionary<string, Item> ();
 			Item this_item = new Item (item_price, isequipped);
 			shop.items [item_name] = this_item;
-
+			if(isequipped)
+			{
+				shop.last_equipped_item = item_name;
+			}
 			// Save the shop to file
 			bf.Serialize (file, shop);
 			file.Close ();
@@ -164,6 +171,46 @@ public class GameData : MonoBehaviour {
 
 			file.Close ();
 			return shop;
+		}
+		return null;
+	}
+
+	public Item Load_Equipped_Item()
+	{
+		if(File.Exists ((Application.persistentDataPath + "/shopinfo.dat")))
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			FileStream file = File.Open (Application.persistentDataPath + "/shopinfo.dat", FileMode.Open);
+			Shop shop = (Shop)bf.Deserialize (file);
+			foreach(KeyValuePair<string, Item> item in shop.items)
+			{
+				if(item.Value.is_equipped)
+				{
+					Debug.Log ("Equipped_Item found");
+					return item.Value;
+				}
+			}
+			file.Close ();
+			return null;
+		}
+		return null;
+	}
+
+	public string Load_Equipped_Item_name()
+	{
+		if(File.Exists ((Application.persistentDataPath + "/shopinfo.dat")))
+		{
+			BinaryFormatter bf = new BinaryFormatter ();
+			FileStream file = File.Open (Application.persistentDataPath + "/shopinfo.dat", FileMode.Open);
+			Shop shop = (Shop)bf.Deserialize (file);
+
+			if(shop != null)
+			{
+				return shop.last_equipped_item;
+			}
+
+			file.Close ();
+			return null;
 		}
 		return null;
 	}
@@ -187,6 +234,7 @@ public class Level
 public class Shop
 {
 	public Dictionary<string, Item> items;
+	public string last_equipped_item;
 }
 
 [Serializable]
@@ -194,10 +242,28 @@ public class Item
 {
 	public int price;
 	public bool is_equipped;
+	public string art_source_prefab_name;
 
 	public Item(int price, bool isequipped)
 	{
 		this.price = price;
 		is_equipped = isequipped;
+	}
+
+	public Item(int price, bool isequipped, string prefab_name)
+	{
+		this.price = price;
+		is_equipped = isequipped;
+		art_source_prefab_name = prefab_name;
+	}
+
+	public void unequip()
+	{
+		is_equipped = false;
+	}
+
+	public void equip()
+	{
+		is_equipped = true;
 	}
 }

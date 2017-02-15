@@ -8,6 +8,7 @@ public class collide : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.gameObject.tag == "Bullet"){
+			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
 			Instantiate (explode, this.transform.position, Quaternion.identity );
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", Time.time);
 			Destroy (other.gameObject);

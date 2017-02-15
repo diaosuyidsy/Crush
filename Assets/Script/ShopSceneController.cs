@@ -74,11 +74,13 @@ public class ShopSceneController : MonoBehaviour {
 
 	public void OnButton_ClickItem()
 	{
+		GameObject cur_sel = EventSystem.current.currentSelectedGameObject;
 		// Setup item
-		intro_panel_data.GetComponent<ItemIntroData> ().price = EventSystem.current.currentSelectedGameObject.GetComponent<ItemData> ().price;
+		intro_panel_data.GetComponent<ItemIntroData> ().price = cur_sel.GetComponent<ItemData> ().price;
 		intro_panel_data.GetComponent<ItemIntroData> ().price_text.text = "Price:       " + intro_panel_data.GetComponent<ItemIntroData> ().price.ToString ();
-		intro_panel_data.GetComponent<ItemIntroData> ().item_name = EventSystem.current.currentSelectedGameObject.GetComponent<ItemData> ().item_name;
-		intro_panel_data.GetComponent<ItemIntroData> ().introduction_text.text = EventSystem.current.currentSelectedGameObject.GetComponent<ItemData> ().Introduction_text;
+		intro_panel_data.GetComponent<ItemIntroData> ().item_name = cur_sel.GetComponent<ItemData> ().item_name;
+		intro_panel_data.GetComponent<ItemIntroData> ().introduction_text.text = cur_sel.GetComponent<ItemData> ().Introduction_text;
+		intro_panel_data.GetComponent<ItemIntroData> ().replacing_object = cur_sel.GetComponent<ItemData> ().replacing_art_prefab;
 
 		Shop shop = GameData.gd.Load_Shop ();
 		string name_of_item = EventSystem.current.currentSelectedGameObject.GetComponent<ItemData> ().item_name;
@@ -108,10 +110,8 @@ public class ShopSceneController : MonoBehaviour {
 			{
 				// Unequip last equipped item
 				if(shop != null){
-					foreach(KeyValuePair<string, Item> i in shop.items)
-					{
-						GameData.gd.Save_Shop_Item (i.Key, i.Value.price, false);
-					}
+					Item last_equipped = shop.items [shop.last_equipped_item];
+					GameData.gd.Save_Shop_Item (shop.last_equipped_item, last_equipped.price, false);
 				}
 
 				// 1st, reduce the gold

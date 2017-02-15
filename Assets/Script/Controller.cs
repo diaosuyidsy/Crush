@@ -33,6 +33,13 @@ public class Controller : MonoBehaviour {
 
 	void Start(){
 		timeContainer = new List<float>();
+		string explosion_prefab_name = GameData.gd.Load_Equipped_Item_name ();
+		if(explosion_prefab_name != null)
+		{
+			explode = (GameObject) Resources.Load ("Explosion_Effect/" + explosion_prefab_name, typeof(GameObject));
+		}
+
+
 	}
 
 		
