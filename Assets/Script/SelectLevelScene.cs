@@ -114,7 +114,7 @@ public class SelectLevelScene : MonoBehaviour
 	// MoveIn m_Title1 and m_Title2
 	IEnumerator MoveInTitleGameObjects()
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.0f);
 		
 		// MoveIn m_Title1 and m_Title2
 		m_Title1.MoveIn(GUIAnimSystemFREE.eGUIMove.Self);
@@ -252,6 +252,11 @@ public class SelectLevelScene : MonoBehaviour
 	// ########################################
 	
 	#region On Button
+
+	public void OnButton_Home()
+	{
+		SceneManager.LoadScene ("StartScene");
+	}
 
 	public void OnButton_Dialog(int llevelnum)
 	{

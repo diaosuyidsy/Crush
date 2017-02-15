@@ -97,7 +97,7 @@ public class StartScene : MonoBehaviour
 	// Move In m_Title1 and m_Title2
 	IEnumerator MoveInTitleGameObjects()
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.0f);
 		
 		// Move In m_Title1 and m_Title2
 		m_Title1.MoveIn(GUIAnimSystemFREE.eGUIMove.Self);
@@ -109,7 +109,7 @@ public class StartScene : MonoBehaviour
 	// MoveIn dialogs
 	IEnumerator MoveInPrimaryButtons()
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.3f);
 		
 		// MoveIn dialogs
 		m_Dialog1.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);		

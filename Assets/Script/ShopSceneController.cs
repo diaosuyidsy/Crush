@@ -72,6 +72,11 @@ public class ShopSceneController : MonoBehaviour {
 
 	#region UI Responder
 
+	public void OnButton_ClickHome()
+	{
+		SceneManager.LoadScene ("StartScene");
+	}
+
 	public void OnButton_ClickItem()
 	{
 		GameObject cur_sel = EventSystem.current.currentSelectedGameObject;
