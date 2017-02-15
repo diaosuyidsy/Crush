@@ -126,7 +126,7 @@ public class SelectLevelScene : MonoBehaviour
 	// MoveIn m_Dialog
 	IEnumerator MoveInPrimaryButtons()
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.5f);
 		
 		// MoveIn dialogs
 		m_Dialog1.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);	

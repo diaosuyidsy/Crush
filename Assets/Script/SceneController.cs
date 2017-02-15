@@ -41,6 +41,9 @@ public class SceneController : MonoBehaviour
 
 	public GUIAnimFREE m_BottomLeft_Bar;
 	public GUIAnimFREE m_BottomLeft_Rainbow;
+	public GUIAnimFREE m_LevelIntro_Panel;
+
+	public GameObject primary_game_object;
 
 	public string next_level_name;
 
@@ -77,6 +80,8 @@ public class SceneController : MonoBehaviour
 		// http://docs.unity3d.com/Manual/script-GraphicRaycaster.html
 		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable(m_Canvas, true);
 
+		StartCoroutine (MoveInLevelIntro ());
+
 	}
 	
 	// Update is called every frame, if the MonoBehaviour is enabled.
@@ -92,6 +97,27 @@ public class SceneController : MonoBehaviour
 	// ########################################
 	
 	#region MoveIn/MoveOut
+
+	IEnumerator MoveInLevelIntro()
+	{
+		yield return new WaitForSeconds (0.0f);
+
+		m_LevelIntro_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+		StartCoroutine (SetupLevel ());
+	}
+
+	IEnumerator SetupLevel()
+	{
+		yield return new WaitForSeconds (1.0f);
+
+		m_LevelIntro_Panel.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+		yield return new WaitForSeconds (0.3f);
+
+		primary_game_object.SetActive (true);
+
+	}
 
 	// MoveIn all primary buttons
 	IEnumerator MoveInPrimaryButtons()

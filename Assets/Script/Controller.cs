@@ -38,8 +38,6 @@ public class Controller : MonoBehaviour {
 		{
 			explode = (GameObject) Resources.Load ("Explosion_Effect/" + explosion_prefab_name, typeof(GameObject));
 		}
-
-
 	}
 
 		
