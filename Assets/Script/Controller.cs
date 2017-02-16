@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Controller : MonoBehaviour {
 
@@ -24,9 +25,10 @@ public class Controller : MonoBehaviour {
 	public GUIAnimFREE Level_Fail_Panel;
 	public GameObject Need_Disable_When_Win;
 
-	private bool lock1=true;
-	private bool lock2=true;
-	private bool lock3=true;
+	public Text score_text;
+	public float velocity_text;
+	private float initial_score = 0f;
+	private float smooth_time = 1f;
 
 	private List<float> timeContainer;
 	public int countForLevel = 0;
@@ -39,30 +41,7 @@ public class Controller : MonoBehaviour {
 			explode = (GameObject) Resources.Load ("Explosion_Effect/" + explosion_prefab_name, typeof(GameObject));
 		}
 	}
-
 		
-	// Update is called once per frame
-	void Update () {
-		if(Input.GetButtonDown ("Q") && lock1){
-			lock1 = false;
-			GameObject bullet1 = (GameObject) Instantiate (bullet,launcher1.position,Quaternion.identity);
-			Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
-			rb.velocity = new Vector2 (0, bulletSpeed);
-		}
-		if(Input.GetButtonDown ("W") && lock2){
-			lock2 = false;
-			GameObject bullet1 = (GameObject) Instantiate (bullet,launcher2.position,Quaternion.identity);
-			Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
-			rb.velocity = new Vector2 (0, bulletSpeed);
-		}
-		if(Input.GetButtonDown ("E") && lock3){
-			lock3 = false;
-			GameObject bullet1 = (GameObject) Instantiate (bullet,launcher3.position,Quaternion.identity);
-			Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
-			rb.velocity = new Vector2 (0, bulletSpeed);
-		}
-
-	}
 
 	void Score(float time){
 		timeContainer.Add (time);
@@ -109,6 +88,8 @@ public class Controller : MonoBehaviour {
 		}else if(final_score > 40){
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 		}
+		// Display score
+		StartCoroutine (score_to (final_score));
 		Save (final_score, starnum);
 	}
 
@@ -122,5 +103,19 @@ public class Controller : MonoBehaviour {
 		GameData.gd.Save ();
 		GameData.gd.setLevelInfo (LevelNum + 1, 0, 0);
 		GameData.gd.Save ();
+	}
+
+	IEnumerator score_to(float target)
+	{
+		float start = initial_score;
+		for(float timer = 0; timer < smooth_time; timer += Time.deltaTime)
+		{
+			float progress = timer / smooth_time;
+			initial_score = (float)Mathf.Lerp (start, target, progress);
+			int display = (int)Mathf.Floor (initial_score * 10);
+			score_text.text = display.ToString () + " / 1000";
+			yield return null;
+		}
+
 	}
 }

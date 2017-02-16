@@ -113,7 +113,7 @@ public class SceneController : MonoBehaviour
 
 		m_LevelIntro_Panel.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (0.5f);
 
 		primary_game_object.SetActive (true);
 
