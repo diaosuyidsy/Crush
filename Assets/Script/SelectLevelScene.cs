@@ -209,6 +209,7 @@ public class SelectLevelScene : MonoBehaviour
 				{
 					int starNum = levelBook [levelnum].starNum;
 					Dialog.GetComponentInParent<LevelInfo>().Enable_Stars (starNum);
+					Dialog.gameObject.GetComponent<Button> ().interactable = true;
 				}
 			}
 		}
@@ -350,7 +351,7 @@ public class SelectLevelScene : MonoBehaviour
 
 	IEnumerator Load_Level(int levelNum)
 	{
-		yield return new WaitForSeconds (1f);
+		yield return new WaitForSeconds (0.5f);
 
 		SceneManager.LoadScene (levelNum + 1);
 	}

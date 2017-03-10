@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 // #############################
 // Note this script is attached to the different level button in select level scene
@@ -12,6 +13,7 @@ public class LevelInfo : MonoBehaviour {
 	public GameObject First_Star;
 	public GameObject Second_Star;
 	public GameObject Third_Star;
+
 
 	public int GetLevelNumber()
 	{

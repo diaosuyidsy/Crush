@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Controller : MonoBehaviour {
 
-	public int LevelNum;
+	private int LevelNum;
 
 	public Transform launcher1;
 	public Transform launcher2;
@@ -14,6 +15,9 @@ public class Controller : MonoBehaviour {
 	public GameObject bullet;
 
 	public float bulletSpeed = 6f;
+	public float three_star_bar=84f;
+	public float two_star_bar=64f;
+	public float one_star_bar=40f;
 
 	public GameObject explode;
 
@@ -34,6 +38,7 @@ public class Controller : MonoBehaviour {
 	public int countForLevel = 0;
 
 	void Start(){
+		LevelNum = SceneManager.GetActiveScene ().buildIndex - 1;
 		timeContainer = new List<float>();
 		string explosion_prefab_name = GameData.gd.Load_Equipped_Item_name ();
 		if(explosion_prefab_name != null)
@@ -65,7 +70,7 @@ public class Controller : MonoBehaviour {
 		}
 		Debug.Log ("Final Score: " + (100f - score * 100));
 		float finalScore = 100f - score * 100;
-		if(finalScore > 40){
+		if(finalScore > one_star_bar){
 			PassLevel (finalScore);
 		}else{
 			FailLevel ();
@@ -76,16 +81,16 @@ public class Controller : MonoBehaviour {
 	{
 		int starnum = 1;
 		Level_Clear_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		if(final_score > 84){
+		if(final_score > three_star_bar){
 			starnum = 3;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			ThirdStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		}else if(final_score > 60){
+		}else if(final_score > two_star_bar){
 			starnum = 2;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		}else if(final_score > 40){
+		}else if(final_score > one_star_bar){
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 		}
 		// Display score
@@ -93,7 +98,7 @@ public class Controller : MonoBehaviour {
 		Save (final_score, starnum);
 	}
 
-	void FailLevel(){
+	public void FailLevel(){
 		Level_Fail_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 	}
 

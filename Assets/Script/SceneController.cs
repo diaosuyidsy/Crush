@@ -45,8 +45,6 @@ public class SceneController : MonoBehaviour
 
 	public GameObject primary_game_object;
 
-	public string next_level_name;
-
 	// Toggle state of TopLeft, BottomLeft and BottomLeft buttons
 	bool m_BottomLeft_IsOn = false;
 	bool IsMuted = false;
@@ -196,6 +194,7 @@ public class SceneController : MonoBehaviour
 	public void OnButton_Restart()
 	{
 		Debug.Log ("Restart clicked");
+		Time.timeScale = 1f;
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 	}
 
@@ -212,7 +211,7 @@ public class SceneController : MonoBehaviour
 
 	public void OnButton_NextLevel()
 	{
-		SceneManager.LoadScene (next_level_name);
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
 	}
 	
 	#endregion // UI Responder

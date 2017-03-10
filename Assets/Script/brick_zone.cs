@@ -1,17 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-public class collide : MonoBehaviour {
+public class brick_zone : MonoBehaviour {
 
-	public GameObject explode;
+	private GameObject explode;
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.gameObject.tag == "Bullet"){
 			explode = null;
 			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
 			Instantiate (explode, this.transform.position, Quaternion.identity );
-			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", Time.time);
 			Destroy (other.gameObject);
 			StartCoroutine (destroy_this (this.gameObject, 0.1f));
 		}

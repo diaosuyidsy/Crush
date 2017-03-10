@@ -9,7 +9,8 @@ public class VerticalMove : MonoBehaviour {
 	private float DownEdge;
 
 	void Start(){
-		UpEdge = Camera.main.orthographicSize * Screen.height / Screen.width;
+//		UpEdge = Camera.main.orthographicSize * Screen.height / Screen.width;
+		UpEdge = Camera.main.orthographicSize;
 		DownEdge = 0;
 	}
 	// Update is called once per frame

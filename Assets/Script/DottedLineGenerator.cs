@@ -32,11 +32,6 @@ public class DottedLineGenerator : MonoBehaviour {
 	{
 		setTrajectoryPoints(transform.position);
 
-//		if(!coroutine){
-//			StartCoroutine (moveTrajectoryPoints ());
-//			coroutine = true;
-//		}
-
 	}
 
 	void setTrajectoryPoints(Vector3 pStartPosition)
@@ -53,18 +48,4 @@ public class DottedLineGenerator : MonoBehaviour {
 			fTime += 0.1f;
 		}
 	}
-
-//	IEnumerator moveTrajectoryPoints()
-//	{
-//		yield return new WaitForSeconds (0.05f);
-//
-//		foreach(GameObject dot in trajectoryPoints)
-//		{
-//			Vector3 pos = new Vector3 (dot.transform.position.x, dot.transform.position.y, dot.transform.position.z);
-//			pos.y += 0.5f;
-//			dot.transform.position = pos;
-//		}
-//
-//		StartCoroutine (moveTrajectoryPoints ());
-//	}
 }

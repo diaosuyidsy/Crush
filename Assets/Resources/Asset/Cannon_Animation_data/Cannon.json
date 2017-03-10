@@ -1,0 +1,75 @@
+{
+"skeleton": { "hash": "4mFyjZlJ+mBpWZSo44jRXnxYV+U", "spine": "3.5.51", "width": 219, "height": 279.73, "images": "./images/" },
+"bones": [
+	{ "name": "root" },
+	{ "name": "bone", "parent": "root", "x": 142.72, "y": -370.71 },
+	{ "name": "Body", "parent": "bone", "length": 226.02, "rotation": 89.01 },
+	{ "name": "Lid", "parent": "Body", "length": 45.68, "rotation": 0.99, "x": 225.06, "y": -0.5 }
+],
+"slots": [
+	{ "name": "Lid", "bone": "Lid", "attachment": "Lid" },
+	{ "name": "Hole", "bone": "Lid", "attachment": "Hole" },
+	{ "name": "Neck", "bone": "Lid", "attachment": "Neck" },
+	{ "name": "Neck_Light", "bone": "Lid", "attachment": "Neck_Light" },
+	{ "name": "Body", "bone": "Body", "attachment": "Body" },
+	{ "name": "Body_Light", "bone": "Body", "attachment": "Body_Light" },
+	{ "name": "Neck_Down_Light", "bone": "Body", "attachment": "Neck_Down_Light" },
+	{ "name": "Body_Left_Light", "bone": "Body", "attachment": "Body_Left_Light" }
+],
+"skins": {
+	"default": {
+		"Body": {
+			"Body": { "x": 112.27, "y": -1.34, "rotation": -89.01, "width": 219, "height": 237 }
+		},
+		"Body_Left_Light": {
+			"Body_Left_Light": { "x": 112.44, "y": 63.06, "rotation": -89.01, "width": 86, "height": 235 }
+		},
+		"Body_Light": {
+			"Body_Light": { "x": 149.99, "y": -47.52, "rotation": -89.01, "width": 68, "height": 157 }
+		},
+		"Hole": {
+			"Hole": { "x": 34.04, "y": 0.27, "rotation": -90, "width": 100, "height": 11 }
+		},
+		"Lid": {
+			"Lid": { "x": 32.45, "y": 1.27, "rotation": -90, "width": 137, "height": 32 }
+		},
+		"Neck": {
+			"Neck": { "x": 15.78, "y": 1.27, "rotation": -90, "width": 137, "height": 34 }
+		},
+		"Neck_Down_Light": {
+			"Neck_Down_Light": { "x": 224.18, "y": -1.57, "rotation": -89.01, "width": 110, "height": 13 }
+		},
+		"Neck_Light": {
+			"Neck_Light": { "x": 15.85, "y": -35.87, "rotation": -90, "width": 64, "height": 32 }
+		}
+	}
+},
+"animations": {
+	"animation": {
+		"bones": {
+			"Body": {
+				"rotate": [
+					{ "time": 0, "angle": 0 }
+				],
+				"translate": [
+					{ "time": 0, "x": 0, "y": 0 }
+				],
+				"scale": [
+					{ "time": 0, "x": 1, "y": 1 },
+					{ "time": 0.3333, "x": 0.432, "y": 1.392 },
+					{ "time": 0.5, "x": 1.359, "y": 0.694 },
+					{ "time": 0.6667, "x": 1, "y": 1 }
+				],
+				"shear": [
+					{ "time": 0, "x": 0, "y": 0 }
+				]
+			},
+			"Lid": {
+				"scale": [
+					{ "time": 0.5, "x": 0.534, "y": 1 }
+				]
+			}
+		}
+	}
+}
+}

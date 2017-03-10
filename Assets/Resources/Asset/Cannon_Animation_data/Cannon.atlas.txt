@@ -1,0 +1,62 @@
+
+Cannon.png
+size: 512,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Body
+  rotate: false
+  xy: 2, 17
+  size: 219, 237
+  orig: 219, 237
+  offset: 0, 0
+  index: -1
+Body_Left_Light
+  rotate: false
+  xy: 223, 19
+  size: 86, 235
+  orig: 86, 235
+  offset: 0, 0
+  index: -1
+Body_Light
+  rotate: false
+  xy: 311, 97
+  size: 68, 157
+  orig: 68, 157
+  offset: 0, 0
+  index: -1
+Hole
+  rotate: false
+  xy: 114, 4
+  size: 100, 11
+  orig: 100, 11
+  offset: 0, 0
+  index: -1
+Lid
+  rotate: true
+  xy: 417, 117
+  size: 137, 32
+  orig: 137, 32
+  offset: 0, 0
+  index: -1
+Neck
+  rotate: true
+  xy: 381, 117
+  size: 137, 34
+  orig: 137, 34
+  offset: 0, 0
+  index: -1
+Neck_Down_Light
+  rotate: false
+  xy: 2, 2
+  size: 110, 13
+  orig: 110, 13
+  offset: 0, 0
+  index: -1
+Neck_Light
+  rotate: false
+  xy: 311, 63
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
