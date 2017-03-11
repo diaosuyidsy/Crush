@@ -13,7 +13,8 @@ public class collide : MonoBehaviour {
 			Instantiate (explode, this.transform.position, Quaternion.identity );
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", Time.time);
 			Destroy (other.gameObject);
-			StartCoroutine (destroy_this (this.gameObject, 0.1f));
+//			StartCoroutine (destroy_this (this.gameObject, 0.1f));
+			Destroy (gameObject);
 		}
 	}
 
