@@ -16,6 +16,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 #endregion // Namespaces
 
@@ -243,4 +244,9 @@ public class SceneController : MonoBehaviour
 
 	
 	#endregion // Toggle Button
+
+	#region Helper Functions
+
+
+	#endregion
 }

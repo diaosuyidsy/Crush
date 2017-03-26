@@ -11,18 +11,12 @@ public class collide : MonoBehaviour {
 			explode = null;
 			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
 			Instantiate (explode, this.transform.position, Quaternion.identity );
-			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", Time.time);
 			Destroy (other.gameObject);
-//			StartCoroutine (destroy_this (this.gameObject, 0.1f));
 			Destroy (gameObject);
 		}
 	}
 
-	IEnumerator destroy_this(GameObject GO, float wait_time)
-	{
-		yield return new WaitForSeconds (wait_time);
-
-		Destroy (GO);
+	void OnEnable() {
+		GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("target_numAdd1");
 	}
-
 }

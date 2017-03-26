@@ -18,7 +18,6 @@ public class brick_zone : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D other){
 		if(other.gameObject.tag == "Bullet"){
-			Debug.Log ("Collision entered");
 			explode = null;
 			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
 			Instantiate (explode, this.transform.position, Quaternion.identity );

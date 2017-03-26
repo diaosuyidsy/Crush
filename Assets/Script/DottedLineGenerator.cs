@@ -10,7 +10,7 @@ public class DottedLineGenerator : MonoBehaviour {
 	public float distance_to_head_of_launcher;
 	public float distance_between_dot;
 
-	private int numOfTrajectoryPoints = 30;
+	public int numOfTrajectoryPoints = 30;
 	private List<GameObject> trajectoryPoints;
 	private float bulletSpeed;
 
@@ -32,7 +32,7 @@ public class DottedLineGenerator : MonoBehaviour {
 
 	void Update ()
 	{
-		setTrajectoryPoints(transform.position, transform.localRotation.z);
+		setTrajectoryPoints(transform.position, transform.rotation.eulerAngles.z);
 	}
 
 	void setTrajectoryPoints(Vector3 pStartPosition, float angle)
@@ -45,26 +45,34 @@ public class DottedLineGenerator : MonoBehaviour {
 		float temp_dis = distance_to_head_of_launcher;
 		bool first_time_portal = true;
 		for (int i = 0; i < numOfTrajectoryPoints; i++) {
-			float dy = fTime * distance_between_dot * Mathf.Cos (angle * 2);
-			float dx = -fTime * distance_between_dot * Mathf.Sin (angle * 2);
-			Vector3 pos = new Vector3 (pStartPosition.x + dx - temp_dis * Mathf.Sin (angle * 2), 
-				pStartPosition.y + temp_dis * Mathf.Cos (angle * 2) + dy, 2);
+			float dy = fTime * distance_between_dot * Mathf.Cos (Mathf.Deg2Rad * angle);
+			float dx = -fTime * distance_between_dot * Mathf.Sin (Mathf.Deg2Rad * angle);
+			Vector3 pos = new Vector3 (pStartPosition.x + dx - temp_dis * Mathf.Sin (Mathf.Deg2Rad * angle), 
+				pStartPosition.y + temp_dis * Mathf.Cos (Mathf.Deg2Rad * angle) + dy, 2);
 
 			// If a blocking area show up, don't render anymore
-			Collider2D hitcollider = Physics2D.OverlapCircle (pos, 0.1f);
+			Collider2D hitcollider = Physics2D.OverlapCircle (pos, 1f);
+			if(hitcollider != null && hitcollider.gameObject.tag == "Target"){
+				for(;i < numOfTrajectoryPoints; i++){
+					trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
+				}
+				break;
+			}
 			if(hitcollider != null && hitcollider.gameObject.tag == "Brick"){
 				for(;i < numOfTrajectoryPoints; i++){
 					trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
 				}
 				break;
 			}
+			if(hitcollider != null && hitcollider.gameObject.tag == "Bounce"){
+				for(;i < numOfTrajectoryPoints; i++){
+					trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
+				}
+				break;
+				//TODO
+			}
 			if(hitcollider != null &&  hitcollider.gameObject.tag == "Portal_Sender"){
-//				for(;i < numOfTrajectoryPoints; i++){
-//					trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
-//				}
-//				break;
 				pStartPosition = hitcollider.gameObject.GetComponent <Portal_Block> ().receiver.position;
-				Debug.Log (pStartPosition);
 				temp_dis = 0;
 				if(first_time_portal){
 					fTime = 0.1f;
@@ -72,7 +80,6 @@ public class DottedLineGenerator : MonoBehaviour {
 				}
 			}
 			// If encountered a wind area, bend
-			// TODO
 			if(hitcollider != null && hitcollider.gameObject.tag == "Windzone"){
 
 				float theta = transform.localRotation.z * 2.5f;

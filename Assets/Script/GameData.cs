@@ -20,6 +20,7 @@ public class GameData : MonoBehaviour {
 
 	public int max_Level_Select_Pointer;
 	public int min_Level_Select_Pointer;
+	public Dictionary<int, LaunchersInfo> launchersinfomap = new Dictionary<int, LaunchersInfo>();
 
 	#endregion
 
@@ -33,6 +34,14 @@ public class GameData : MonoBehaviour {
 		else if(gd == this)
 		{
 			Destroy (gameObject);
+		}
+	}
+
+	public void saveLaunchersInfo(int levelNum, LaunchersInfo _launchersinfo){
+		if(launchersinfomap.ContainsKey (levelNum)){
+			launchersinfomap [levelNum] = _launchersinfo;
+		}else{
+			launchersinfomap.Add (levelNum, _launchersinfo);
 		}
 	}
 
@@ -265,5 +274,29 @@ public class Item
 	public void equip()
 	{
 		is_equipped = true;
+	}
+}
+
+public class LaunchersInfo
+{
+	public int amount;
+	public List<Launcher> launchers;
+	public LaunchersInfo(int _amount, List<Vector3> _positions, List<float> _zR)
+	{
+		launchers = new List<Launcher> ();
+		amount = _amount;
+		for(int i = 0; i < amount; i++){
+			launchers.Add (new Launcher(_positions[i],_zR[i]));
+		}
+	}
+}
+
+public class Launcher
+{
+	public Vector3 position;
+	public float zRotation;
+	public Launcher(Vector3 _position, float _zR){
+		position = _position;
+		zRotation = _zR;
 	}
 }

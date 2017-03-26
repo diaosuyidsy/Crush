@@ -8,9 +8,7 @@ public class Controller : MonoBehaviour {
 
 	private int LevelNum;
 
-	public Transform launcher1;
-	public Transform launcher2;
-	public Transform launcher3;
+	public GameObject[] Launchers;
 
 	public GameObject bullet;
 
@@ -33,6 +31,8 @@ public class Controller : MonoBehaviour {
 	public float velocity_text;
 	private float initial_score = 0f;
 	private float smooth_time = 1f;
+	private int target_num;
+	private int countForFail = 0;
 
 	private List<float> timeContainer;
 	public int countForLevel = 0;
@@ -45,16 +45,25 @@ public class Controller : MonoBehaviour {
 		{
 			explode = (GameObject) Resources.Load ("Explosion_Effect/" + explosion_prefab_name, typeof(GameObject));
 		}
+		setNewLaunchers ();
 	}
 		
-
-	void Score(float time){
+	void Score(Score_param a){
+		float time = a.time;
+		bool succeed = a.succeed;
 		timeContainer.Add (time);
-		countForLevel++;
-		if(countForLevel==3){
-			CalculateScore ();
+		if (succeed)
+			countForLevel++;
+		else
+			countForFail++;
+		if(countForLevel + countForFail >=target_num){
+			if(countForFail > 0){
+				FailLevel ();
+			}else{
+				CalculateScore ();
+			}
+			save_launchers_info ();
 		}
-
 	}
 
 	private void CalculateScore(){
@@ -113,7 +122,7 @@ public class Controller : MonoBehaviour {
 	IEnumerator score_to(float target)
 	{
 		float start = initial_score;
-		for(float timer = 0; timer < smooth_time; timer += Time.deltaTime)
+		for(float timer = 0; timer <= smooth_time; timer += Time.deltaTime)
 		{
 			float progress = timer / smooth_time;
 			initial_score = (float)Mathf.Lerp (start, target, progress);
@@ -121,6 +130,37 @@ public class Controller : MonoBehaviour {
 			score_text.text = display.ToString () + " / 1000";
 			yield return null;
 		}
+	}
 
+	void save_launchers_info(){
+		GameObject[] launchers = GameObject.FindGameObjectsWithTag ("Launcher");
+		int amount = launchers.Length;
+		List<Vector3> positions = new List<Vector3> ();
+		List<float> zRs = new List<float> ();
+		foreach(GameObject launcher in launchers)
+		{
+			positions.Add (launcher.transform.position);
+			zRs.Add (launcher.transform.rotation.eulerAngles.z);
+		}
+		LaunchersInfo li = new LaunchersInfo (amount, positions, zRs);
+		GameData.gd.saveLaunchersInfo (LevelNum, li);
+
+	}
+
+	void target_numAdd1(){
+		target_num++;
+	}
+
+	void setNewLaunchers(){
+		int levelNum = SceneManager.GetActiveScene ().buildIndex - 1;
+		Dictionary<int, LaunchersInfo> launchersinfomap = GameData.gd.launchersinfomap;
+		if(launchersinfomap.ContainsKey (levelNum)){
+			int i = 0;
+			foreach(GameObject launcher in Launchers){
+				launcher.transform.position = launchersinfomap [levelNum].launchers [i].position;
+				launcher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [levelNum].launchers [i].zRotation));
+				i++;
+			}
+		}
 	}
 }

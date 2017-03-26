@@ -26,11 +26,9 @@ public class Bounce_Block : MonoBehaviour {
 //		_colliderVec = transform.localRotation.z > 0 ? tmp1 - tmp2 : tmp2 - tmp1;
 		_colliderVec = tmp1 - tmp2;
 		Vector2 temp = new Vector2 (-_colliderVec.y, _colliderVec.x).normalized;
-		Debug.Log (temp);
 		if (flip) {
 			temp = new Vector2 (temp.x, -temp.y);
 		}
-		Debug.Log (temp);
 		_normal = new Vector3 (temp.x, temp.y, 0);
 	}
 

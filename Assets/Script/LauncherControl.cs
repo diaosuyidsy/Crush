@@ -31,10 +31,14 @@ public class LauncherControl : MonoBehaviour
 		check_click = Time.time;
 		screenPoint = Camera.main.WorldToScreenPoint (gameObject.transform.position);
 		Vector3 v3 = Input.mousePosition;
-		float vy = Camera.main.ScreenToWorldPoint (v3).y;
-		if(vy > gameObject.transform.position.y + 3){
+		Vector3 v4 = Camera.main.ScreenToWorldPoint (v3);
+		Debug.Log (v4);
+		Collider2D hitcollider = Physics2D.OverlapCircle (v4, 0.1f);
+
+		if(hitcollider.gameObject.tag == "Rotation"){
+			Debug.Log ("rotate");
 			edit_type = "rotate";
-		}else{
+		}else if(hitcollider.gameObject.tag == "Launcher"){
 			edit_type = "transform";
 		}
 		if(can_move_horizontal && !can_move_vertical){
@@ -89,7 +93,7 @@ public class LauncherControl : MonoBehaviour
 				smoke_effect.GetComponent<Renderer> ().sortingOrder = 10;
 				Rigidbody2D rb = bullet1.GetComponent<Rigidbody2D> ();
 				rb.gravityScale = 0f;
-				rb.velocity = new Vector2 (-bulletSpeed * Mathf.Sin (transform.localRotation.z * 2), bulletSpeed * Mathf.Cos (transform.localRotation.z * 2));
+				rb.velocity = new Vector2 (-bulletSpeed * Mathf.Sin (transform.rotation.eulerAngles.z * Mathf.Deg2Rad), bulletSpeed * Mathf.Cos (transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
 			}
 		}
 	}
