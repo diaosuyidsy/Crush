@@ -18,12 +18,6 @@ public class Bounce_Block : MonoBehaviour {
 		float rotation = transform.localRotation.eulerAngles.z;
 		bool flip = (rotation > 90 && rotation <= 180) ||
 		            (rotation > 270 && rotation < 360) ? true : false;
-
-//		Debug.Log ("extents: " + _collider.bounds.extents);
-//		Debug.Log ("center: " + _collider.bounds.center);
-//		Debug.Log ("tmp1: " + tmp1);
-//		Debug.Log ("tmp2: " + tmp2);
-//		_colliderVec = transform.localRotation.z > 0 ? tmp1 - tmp2 : tmp2 - tmp1;
 		_colliderVec = tmp1 - tmp2;
 		Vector2 temp = new Vector2 (-_colliderVec.y, _colliderVec.x).normalized;
 		if (flip) {

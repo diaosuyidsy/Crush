@@ -14,7 +14,6 @@ public class Bullet_Collide : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
-		Debug.Log (other.gameObject.tag);
 		if(other.gameObject.tag == "Target"){
 			Score_param a = new Score_param (Time.time, true);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);

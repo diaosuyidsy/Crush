@@ -32,7 +32,6 @@ public class LauncherControl : MonoBehaviour
 		screenPoint = Camera.main.WorldToScreenPoint (gameObject.transform.position);
 		Vector3 v3 = Input.mousePosition;
 		Vector3 v4 = Camera.main.ScreenToWorldPoint (v3);
-		Debug.Log (v4);
 		Collider2D hitcollider = Physics2D.OverlapCircle (v4, 0.1f);
 
 		if(hitcollider.gameObject.tag == "Rotation"){

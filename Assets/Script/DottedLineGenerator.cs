@@ -25,7 +25,7 @@ public class DottedLineGenerator : MonoBehaviour {
 		for(int i=0;i<numOfTrajectoryPoints;i++)
 		{
 			GameObject dot= (GameObject) Instantiate(TrajectoryPointPrefeb);
-			dot.GetComponent<SpriteRenderer>().enabled = false;
+			dot.GetComponent<SpriteRenderer>().enabled = true;
 			trajectoryPoints.Insert(i,dot);
 		}
 	}
@@ -51,7 +51,7 @@ public class DottedLineGenerator : MonoBehaviour {
 				pStartPosition.y + temp_dis * Mathf.Cos (Mathf.Deg2Rad * angle) + dy, 2);
 
 			// If a blocking area show up, don't render anymore
-			Collider2D hitcollider = Physics2D.OverlapCircle (pos, 1f);
+			Collider2D hitcollider = Physics2D.OverlapCircle (pos, 0.4f);
 			if(hitcollider != null && hitcollider.gameObject.tag == "Target"){
 				for(;i < numOfTrajectoryPoints; i++){
 					trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
@@ -65,8 +65,31 @@ public class DottedLineGenerator : MonoBehaviour {
 				break;
 			}
 			if(hitcollider != null && hitcollider.gameObject.tag == "Bounce"){
+				BoxCollider2D boxcollider = (BoxCollider2D)hitcollider;
+				Vector3 _center = boxcollider.bounds.center;
+				Vector3 _extents = boxcollider.bounds.extents;
+				Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + _extents.y - boxcollider.size.y * 0.5f);
+				Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - _extents.y + boxcollider.size.y * 0.5f);
+				bool firstentry = true;
 				for(;i < numOfTrajectoryPoints; i++){
-					trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
+					if(firstentry){
+						trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
+						firstentry = false;
+					}else{
+						dy = fTime * distance_between_dot * Mathf.Cos (Mathf.Deg2Rad * angle);
+						dx = -fTime * distance_between_dot * Mathf.Sin (Mathf.Deg2Rad * angle);
+						pos = new Vector3 (pStartPosition.x + dx - temp_dis * Mathf.Sin (Mathf.Deg2Rad * angle), 
+							pStartPosition.y + temp_dis * Mathf.Cos (Mathf.Deg2Rad * angle) + dy, 2);
+						float a = tmp2.x - tmp1.x;
+						float b = tmp1.y - tmp2.y;
+						float c = tmp1.x * tmp2.y - tmp2.x * tmp1.y;
+						float p = pos.x, q = pos.y;
+						Vector3 newPos = new Vector3 ((p * (a * a - b * b) - 2 * b * (a * q + c)) / (a * a + b * b), 
+							(q * (b * b - a * a) - 2 * a * (b * p + c)) / (a * a + b * b)); // Calculate the mirro point
+						trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = true;
+						trajectoryPoints [i].transform.position = newPos;
+					}
+					fTime += 0.1f;
 				}
 				break;
 				//TODO
