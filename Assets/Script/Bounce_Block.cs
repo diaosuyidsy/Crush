@@ -30,8 +30,6 @@ public class Bounce_Block : MonoBehaviour {
 		if(other.gameObject.tag == "Bullet"){
 			Vector3 ve = other.gameObject.GetComponent<Rigidbody2D> ().velocity;
 			Vector3 vp = 2 * Vector3.Dot (ve, _normal) * _normal - ve;
-//			Debug.Log (ve);
-//			Debug.Log (vp);
 			other.gameObject.GetComponent<Rigidbody2D> ().velocity = -1 * vp;
 		}
 	}
