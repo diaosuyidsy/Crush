@@ -11,7 +11,6 @@ public class collide : MonoBehaviour {
 			explode = null;
 			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
 			Instantiate (explode, this.transform.position, Quaternion.identity );
-			Destroy (other.gameObject);
 			Destroy (gameObject);
 		}
 	}

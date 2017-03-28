@@ -1,15 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Bullet_Collide : MonoBehaviour {
+
+	private List<Vector3> bulletposs;
+
+	void OnEnable()
+	{
+		bulletposs = new List<Vector3>();
+		StartCoroutine (savePos ());
+	}
+
+	IEnumerator savePos()
+	{
+		bulletposs.Add (transform.position);
+		yield return new WaitForSeconds (0.08f);
+		StartCoroutine (savePos ());
+	}
+
+	void sendPos()
+	{
+		GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller>().bulletPoses.Add (bulletposs);
+	}
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.gameObject.tag == "Target"){
 			Score_param a = new Score_param (Time.time, true);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			sendPos ();
+			Destroy (gameObject);
 		}else if(other.gameObject.tag == "Brick" || other.gameObject.tag == "Deathzone"){
 			Score_param a = new Score_param (Time.time, false);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			sendPos ();
+			Destroy (gameObject);
 		}
 	}
 
@@ -17,9 +42,13 @@ public class Bullet_Collide : MonoBehaviour {
 		if(other.gameObject.tag == "Target"){
 			Score_param a = new Score_param (Time.time, true);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			sendPos ();
+			Destroy (gameObject);
 		}else if(other.gameObject.tag == "Brick" || other.gameObject.tag == "Deathzone"){
 			Score_param a = new Score_param (Time.time, false);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			sendPos ();
+			Destroy (gameObject);
 		}
 	}
 }

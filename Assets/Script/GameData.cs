@@ -22,6 +22,7 @@ public class GameData : MonoBehaviour {
 	public int min_Level_Select_Pointer;
 	public Dictionary<int, LaunchersInfo> launchersinfomap = new Dictionary<int, LaunchersInfo>();
 
+
 	#endregion
 
 	void Awake()
@@ -281,13 +282,15 @@ public class LaunchersInfo
 {
 	public int amount;
 	public List<Launcher> launchers;
-	public LaunchersInfo(int _amount, List<Vector3> _positions, List<float> _zR)
+	public List<List<Vector3>> bulletTracks;
+	public LaunchersInfo(int _amount, List<Vector3> _positions, List<float> _zR, List<List<Vector3>> _bulletTracks)
 	{
 		launchers = new List<Launcher> ();
 		amount = _amount;
 		for(int i = 0; i < amount; i++){
 			launchers.Add (new Launcher(_positions[i],_zR[i]));
 		}
+		bulletTracks = _bulletTracks;
 	}
 }
 

@@ -26,6 +26,11 @@ public class LauncherControl : MonoBehaviour
 
 	#endregion
 
+	void OnEnable()
+	{
+		GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().setShadow ();
+	}
+
 	void OnMouseDown ()
 	{
 		check_click = Time.time;
