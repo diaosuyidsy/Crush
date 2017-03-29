@@ -188,6 +188,7 @@ public class SceneController : MonoBehaviour
 
 	public void OnButton_Home()
 	{
+		GameData.gd.launchersinfomap = new Dictionary<int, LaunchersInfo>();
 		SceneManager.LoadScene ("StartScene");
 	}
 

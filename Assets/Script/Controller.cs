@@ -29,6 +29,9 @@ public class Controller : MonoBehaviour
 	public GUIAnimFREE Level_Clear_Panel;
 	public GUIAnimFREE Level_Fail_Panel;
 	public GameObject Need_Disable_When_Win;
+	public AudioClip bounceSound;
+	public AudioClip explosiveSound;
+	private AudioSource audiosource;
 
 	public Text score_text;
 	public float velocity_text;
@@ -45,6 +48,7 @@ public class Controller : MonoBehaviour
 
 	void Start ()
 	{
+		audiosource = GetComponent<AudioSource> ();
 		bulletPoses = new List<List<Vector3>> ();
 		LevelNum = SceneManager.GetActiveScene ().buildIndex - 1;
 		timeContainer = new List<float> ();
@@ -52,7 +56,17 @@ public class Controller : MonoBehaviour
 		if (explosion_prefab_name != null) {
 			explode = (GameObject)Resources.Load ("Explosion_Effect/" + explosion_prefab_name, typeof(GameObject));
 		}
-//		setNewLaunchers ();
+		setNewLaunchers ();
+	}
+
+	public void playSound(string what)
+	{
+		if(what == "Bounce"){
+			audiosource.clip = bounceSound;
+		}else if(what == "Explosion"){
+			audiosource.clip = explosiveSound;
+		}
+		audiosource.Play ();
 	}
 
 	void Score (Score_param a)
@@ -174,8 +188,8 @@ public class Controller : MonoBehaviour
 					shadowLauncher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [LevelNum].launchers [i].zRotation));
 					i++;
 				}
-				foreach(List<Vector3> poslist in launchersinfomap[LevelNum].bulletTracks){
-					foreach(Vector3 pos in poslist){
+				foreach (List<Vector3> poslist in launchersinfomap[LevelNum].bulletTracks) {
+					foreach (Vector3 pos in poslist) {
 						GameObject track = (GameObject.Instantiate (shadowDotPrefab));
 						track.transform.position = pos;
 					}
@@ -185,16 +199,17 @@ public class Controller : MonoBehaviour
 		}
 	}
 
-	//	void setNewLaunchers(){
-	//		int levelNum = SceneManager.GetActiveScene ().buildIndex - 1;
-	//		Dictionary<int, LaunchersInfo> launchersinfomap = GameData.gd.launchersinfomap;
-	//		if(launchersinfomap.ContainsKey (levelNum)){
-	//			int i = 0;
-	//			foreach(GameObject launcher in Launchers){
-	//				launcher.transform.position = launchersinfomap [levelNum].launchers [i].position;
-	//				launcher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [levelNum].launchers [i].zRotation));
-	//				i++;
-	//			}
-	//		}
-	//	}
+	void setNewLaunchers ()
+	{
+		int levelNum = SceneManager.GetActiveScene ().buildIndex - 1;
+		Dictionary<int, LaunchersInfo> launchersinfomap = GameData.gd.launchersinfomap;
+		if (launchersinfomap.ContainsKey (levelNum)) {
+			int i = 0;
+			foreach (GameObject launcher in Launchers) {
+				launcher.transform.position = launchersinfomap [levelNum].launchers [i].position;
+				launcher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [levelNum].launchers [i].zRotation));
+				i++;
+			}
+		}
+	}
 }

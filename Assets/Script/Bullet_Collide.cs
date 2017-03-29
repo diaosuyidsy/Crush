@@ -28,13 +28,18 @@ public class Bullet_Collide : MonoBehaviour {
 		if(other.gameObject.tag == "Target"){
 			Score_param a = new Score_param (Time.time, true);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			GameObject.FindGameObjectWithTag ("GameManager").SendMessage ("playSound", "Explosion");
 			sendPos ();
 			Destroy (gameObject);
 		}else if(other.gameObject.tag == "Brick" || other.gameObject.tag == "Deathzone"){
 			Score_param a = new Score_param (Time.time, false);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			GameObject.FindGameObjectWithTag ("GameManager").SendMessage ("playSound", "Explosion");
 			sendPos ();
 			Destroy (gameObject);
+		}else if(other.gameObject.tag == "Bounce" || other.gameObject.tag == "EnviromentBounce")
+		{
+			GameObject.FindGameObjectWithTag ("GameManager").SendMessage ("playSound", "Bounce");
 		}
 	}
 
@@ -42,13 +47,21 @@ public class Bullet_Collide : MonoBehaviour {
 		if(other.gameObject.tag == "Target"){
 			Score_param a = new Score_param (Time.time, true);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			GameObject.FindGameObjectWithTag ("GameManager").SendMessage ("playSound", "Explosion");
+
 			sendPos ();
 			Destroy (gameObject);
 		}else if(other.gameObject.tag == "Brick" || other.gameObject.tag == "Deathzone"){
 			Score_param a = new Score_param (Time.time, false);
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("Score", a);
+			GameObject.FindGameObjectWithTag ("GameManager").SendMessage ("playSound", "Explosion");
+
 			sendPos ();
 			Destroy (gameObject);
+		}else if(other.gameObject.tag == "Bounce" || other.gameObject.tag == "EnvironmentBounce")
+		{
+			GameObject.FindGameObjectWithTag ("GameManager").SendMessage ("playSound", "Bounce");
+
 		}
 	}
 }

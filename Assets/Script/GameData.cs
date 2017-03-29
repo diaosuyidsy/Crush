@@ -32,7 +32,7 @@ public class GameData : MonoBehaviour {
 			DontDestroyOnLoad (gameObject);
 			gd = this;
 		}
-		else if(gd == this)
+		else
 		{
 			Destroy (gameObject);
 		}
