@@ -40,7 +40,6 @@ public class LauncherControl : MonoBehaviour
 		Collider2D hitcollider = Physics2D.OverlapCircle (v4, 0.1f);
 
 		if(hitcollider.gameObject.tag == "Rotation"){
-			Debug.Log ("rotate");
 			edit_type = "rotate";
 		}else if(hitcollider.gameObject.tag == "Launcher"){
 			edit_type = "transform";

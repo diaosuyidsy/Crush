@@ -100,7 +100,6 @@ public class Controller : MonoBehaviour
 			score += (i - lasti);
 			lasti = i;
 		}
-		Debug.Log ("Final Score: " + (100f - score * 100));
 		float finalScore = 100f - score * 100;
 		if (finalScore > one_star_bar) {
 			PassLevel (finalScore);
@@ -113,16 +112,16 @@ public class Controller : MonoBehaviour
 	{
 		int starnum = 1;
 		Level_Clear_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		if (final_score > three_star_bar) {
+		if (final_score >= three_star_bar) {
 			starnum = 3;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			ThirdStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		} else if (final_score > two_star_bar) {
+		} else if (final_score >= two_star_bar) {
 			starnum = 2;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		} else if (final_score > one_star_bar) {
+		} else if (final_score >= one_star_bar) {
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 		}
 		// Display score
@@ -146,13 +145,15 @@ public class Controller : MonoBehaviour
 	IEnumerator score_to (float target)
 	{
 		float start = initial_score;
-		for (float timer = 0; timer <= smooth_time; timer += Time.deltaTime) {
+		for (float timer = 0; timer <= smooth_time; timer += 2 * Time.deltaTime) {
 			float progress = timer / smooth_time;
 			initial_score = Mathf.Lerp (start, target, progress);
 			int display = (int)Mathf.Floor (initial_score * 10);
 			score_text.text = display.ToString () + " / 1000";
-			yield return null;
+			yield return new WaitForSeconds (0f);
 		}
+
+		score_text.text = ((int)Mathf.Floor(target * 10)).ToString () + " / 1000";
 	}
 
 	void save_launchers_info ()
@@ -181,12 +182,10 @@ public class Controller : MonoBehaviour
 			launcherEnable = true;
 			Dictionary<int, LaunchersInfo> launchersinfomap = GameData.gd.launchersinfomap;
 			if (launchersinfomap.ContainsKey (LevelNum)) {
-				int i = 0;
-				foreach (GameObject launcher in Launchers) {
+				for(int i = 0; i < Launchers.Length; i++) {
 					GameObject shadowLauncher = (GameObject)Instantiate (shadowLauncherPrefab);
 					shadowLauncher.transform.position = launchersinfomap [LevelNum].launchers [i].position;
 					shadowLauncher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [LevelNum].launchers [i].zRotation));
-					i++;
 				}
 				foreach (List<Vector3> poslist in launchersinfomap[LevelNum].bulletTracks) {
 					foreach (Vector3 pos in poslist) {

@@ -202,16 +202,17 @@ public class SceneController : MonoBehaviour
 	{
 		IsMuted = !IsMuted;
 		if(IsMuted){
-			Camera.main.GetComponent<AudioListener>().enabled = false;
+			GameData.gd.GetComponent<AudioSource> ().Pause ();
 		}else{
-			Camera.main.GetComponent<AudioListener>().enabled = true;
+			GameData.gd.GetComponent<AudioSource> ().Play ();
 		}
 
 	}
 
 	public void OnButton_NextLevel()
 	{
-		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
+		if(SceneManager.GetActiveScene ().name != "Level_7")
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
 	}
 	
 	#endregion // UI Responder
