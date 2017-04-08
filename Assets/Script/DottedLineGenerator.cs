@@ -16,6 +16,7 @@ public class DottedLineGenerator : MonoBehaviour
 	public int numOfTrajectoryPoints = 30;
 	private List<GameObject> trajectoryPoints;
 	private float bulletSpeed;
+	private float leftScreen = 50;
 
 	#endregion
 
@@ -54,18 +55,18 @@ public class DottedLineGenerator : MonoBehaviour
 		Vector3 _extents = boxcollider.bounds.extents;
 		Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + _extents.y - boxcollider.size.y * 0.5f);
 		Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - _extents.y + boxcollider.size.y * 0.5f);
-			float a = tmp2.x - tmp1.x;
-			float b = tmp1.y - tmp2.y;
-			float c = tmp1.x * tmp2.y - tmp2.x * tmp1.y;
-			float p = pos.x, q = pos.y;
+		float a = tmp2.x - tmp1.x;
+		float b = tmp1.y - tmp2.y;
+		float c = tmp1.x * tmp2.y - tmp2.x * tmp1.y;
+		float p = pos.x, q = pos.y;
 
-			Vector3 newPos = new Vector3 ((p * (a * a - b * b) - 2 * b * (a * q + c)) / (a * a + b * b), 
-				                  (q * (b * b - a * a) - 2 * a * (b * p + c)) / (a * a + b * b)); // Calculate the mirro point
-			trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = true;
-			pos = newPos;
+		Vector3 newPos = new Vector3 ((p * (a * a - b * b) - 2 * b * (a * q + c)) / (a * a + b * b), 
+			                 (q * (b * b - a * a) - 2 * a * (b * p + c)) / (a * a + b * b)); // Calculate the mirro point
+		trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = true;
+		pos = newPos;
 	}
 
-	public void metPortalSender(int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pStartPosition,ref bool first_time_portal, ref float fTime)
+	public void metPortalSender (int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pStartPosition, ref bool first_time_portal, ref float fTime)
 	{
 		pStartPosition = hitcollider.gameObject.GetComponent <Portal_Block> ().receiver.position;
 		temp_dis = 0;
@@ -75,7 +76,7 @@ public class DottedLineGenerator : MonoBehaviour
 		}
 	}
 
-	public void metWindzone(int i, Collider2D hitcollider, ref Vector3 pos, Vector3 bulletVelocity, Vector3 wind_center, Vector3 wind_extents)
+	public void metWindzone (int i, Collider2D hitcollider, ref Vector3 pos, Vector3 bulletVelocity, Vector3 wind_center, Vector3 wind_extents)
 	{
 		float theta = transform.localRotation.z * 2.5f;
 		float s1 = pos.y - hitcollider.bounds.center.y + hitcollider.bounds.extents.y;
@@ -91,12 +92,12 @@ public class DottedLineGenerator : MonoBehaviour
 		wind_extents = hitcollider.bounds.extents;
 	}
 
-	public void metBound(int i, Collider2D hitcollider, ref Vector3 pos)
+	public void metBound (int i, Collider2D hitcollider, ref Vector3 pos)
 	{
 		Vector3 tempos = Camera.main.WorldToScreenPoint (pos);
 		// Set tragectory point to reflect
-		if (tempos.x <= 0) {
-			tempos.x *= -1;
+		if (tempos.x <= leftScreen) {
+			tempos.x = 2 * leftScreen - tempos.x;
 		}
 		if (tempos.x >= Screen.width) {
 			tempos.x = 2 * Screen.width - tempos.x;
@@ -106,7 +107,7 @@ public class DottedLineGenerator : MonoBehaviour
 		}
 		pos = Camera.main.ScreenToWorldPoint (tempos);
 	}
-		
+
 	void setTrajectoryPoints (Vector3 pStartPosition, float angle)
 	{
 		float fTime = 0f;
@@ -118,19 +119,17 @@ public class DottedLineGenerator : MonoBehaviour
 		bool first_time_portal = true;
 		List<string> methodQueue = new List<string> ();
 		Collider2D hitcollider = null;
-		List<Collider2D> temp = new List<Collider2D>();
+		List<Collider2D> temp = new List<Collider2D> ();
 		for (int i = 0; i < numOfTrajectoryPoints; i++) {
 			trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = true;
 			float dy = fTime * distance_between_dot * Mathf.Cos (Mathf.Deg2Rad * angle);
 			float dx = -fTime * distance_between_dot * Mathf.Sin (Mathf.Deg2Rad * angle);
 			Vector3 pos = new Vector3 (pStartPosition.x + dx - temp_dis * Mathf.Sin (Mathf.Deg2Rad * angle), 
 				              pStartPosition.y + temp_dis * Mathf.Cos (Mathf.Deg2Rad * angle) + dy, 2);
-			if(methodQueue.Count > 0)
-			{
+			if (methodQueue.Count > 0) {
 				int bounceCount = 0;
-				foreach(string method in methodQueue){
-					switch (method)
-					{
+				foreach (string method in methodQueue) {
+					switch (method) {
 					case "metTarget":
 						metTarget (i);
 						break;
@@ -138,21 +137,20 @@ public class DottedLineGenerator : MonoBehaviour
 						metBrick (i);
 						break;
 					case "metBounce":
-						metBounce (i, temp[bounceCount], ref pos);
+						metBounce (i, temp [bounceCount], ref pos);
 						bounceCount++;
 						break;
 					case "metPortalSender":
-						metPortalSender (i,hitcollider,ref temp_dis,ref pStartPosition,ref first_time_portal,ref fTime);
+						metPortalSender (i, hitcollider, ref temp_dis, ref pStartPosition, ref first_time_portal, ref fTime);
 						break;
 					case "metWindzone":
-						metWindzone (i,hitcollider,ref pos,bulletVelocity,wind_center,wind_extents);
+						metWindzone (i, hitcollider, ref pos, bulletVelocity, wind_center, wind_extents);
 						break;
 					case "metBound":
-						metBound (i,hitcollider,ref pos);
+						metBound (i, hitcollider, ref pos);
 						break;
 					}
-					if(method == "metBrick" || method == "metTarget")
-					{
+					if (method == "metBrick" || method == "metTarget") {
 						break;
 					}
 				}
@@ -165,7 +163,7 @@ public class DottedLineGenerator : MonoBehaviour
 				methodQueue.Add ("metBrick");
 			}
 			if (hitcollider != null && hitcollider.gameObject.tag == "Bounce") {
-				if(temp.Count == 0 || temp[temp.Count - 1] != hitcollider){
+				if (temp.Count == 0 || temp [temp.Count - 1] != hitcollider) {
 					temp.Add (hitcollider);
 					methodQueue.Add ("metBounce");
 				}
@@ -188,9 +186,9 @@ public class DottedLineGenerator : MonoBehaviour
 			}
 
 			Vector3 tempos = Camera.main.WorldToScreenPoint (pos);
-			// Set tragectory point to reflect
-			if (tempos.x <= 0 || tempos.x >= Screen.width
-				|| tempos.y >= Screen.height) {
+//			 Set tragectory point to reflect
+			if (tempos.x <= leftScreen || tempos.x >= Screen.width
+			    || tempos.y >= Screen.height) {
 				methodQueue.Add ("metBound");
 				i--;
 				fTime -= 0.2f;

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Controller : MonoBehaviour
 {
+	#region Variable
 
 	private int LevelNum;
 
@@ -14,9 +15,17 @@ public class Controller : MonoBehaviour
 	public GameObject bullet;
 
 	public float bulletSpeed = 6f;
-	public float three_star_bar = 84f;
-	public float two_star_bar = 64f;
-	public float one_star_bar = 40f;
+
+	public float pass_bar = 93f;
+	public int three_star_step = 8;
+	public int two_star_step = 5;
+	public int one_star_step = 3;
+	public Text step_text;
+
+	public int MAX_STEP = 9;
+	private int cur_step;
+
+	public GameObject gameobjects;
 
 	public GameObject explode;
 	public GameObject shadowDotPrefab;
@@ -28,9 +37,12 @@ public class Controller : MonoBehaviour
 
 	public GUIAnimFREE Level_Clear_Panel;
 	public GUIAnimFREE Level_Fail_Panel;
+	public GUIAnimFREE Step_Fail_Panel;
 	public GameObject Need_Disable_When_Win;
+
 	public AudioClip bounceSound;
 	public AudioClip explosiveSound;
+
 	private AudioSource audiosource;
 
 	public Text score_text;
@@ -39,15 +51,18 @@ public class Controller : MonoBehaviour
 	private float smooth_time = 1f;
 	private int target_num;
 	private int countForFail = 0;
-	private bool launcherEnable = false;
 
 	private List<float> timeContainer;
 	public int countForLevel = 0;
 
 	public List<List<Vector3>> bulletPoses;
 
+	#endregion
+
 	void Start ()
 	{
+		step_text.text += MAX_STEP.ToString ();
+		cur_step = MAX_STEP;
 		audiosource = GetComponent<AudioSource> ();
 		bulletPoses = new List<List<Vector3>> ();
 		LevelNum = SceneManager.GetActiveScene ().buildIndex - 1;
@@ -56,14 +71,14 @@ public class Controller : MonoBehaviour
 		if (explosion_prefab_name != null) {
 			explode = (GameObject)Resources.Load ("Explosion_Effect/" + explosion_prefab_name, typeof(GameObject));
 		}
-		setNewLaunchers ();
+//		setNewLaunchers ();
 	}
 
-	public void playSound(string what)
+	public void playSound (string what)
 	{
-		if(what == "Bounce"){
+		if (what == "Bounce") {
 			audiosource.clip = bounceSound;
-		}else if(what == "Explosion"){
+		} else if (what == "Explosion") {
 			audiosource.clip = explosiveSound;
 		}
 		audiosource.Play ();
@@ -80,7 +95,7 @@ public class Controller : MonoBehaviour
 			countForFail++;
 		if (countForLevel + countForFail >= target_num) {
 			if (countForFail > 0) {
-				FailLevel ();
+				FailStep ();
 			} else {
 				CalculateScore ();
 			}
@@ -101,10 +116,10 @@ public class Controller : MonoBehaviour
 			lasti = i;
 		}
 		float finalScore = 100f - score * 100;
-		if (finalScore > one_star_bar) {
+		if (finalScore > pass_bar) {
 			PassLevel (finalScore);
 		} else {
-			FailLevel ();
+			FailStep ();
 		}
 	}
 
@@ -112,21 +127,85 @@ public class Controller : MonoBehaviour
 	{
 		int starnum = 1;
 		Level_Clear_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		if (final_score >= three_star_bar) {
+		if (cur_step >= three_star_step) {
 			starnum = 3;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			ThirdStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		} else if (final_score >= two_star_bar) {
+		} else if (cur_step >= two_star_step) {
 			starnum = 2;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		} else if (final_score >= one_star_bar) {
+		} else if (cur_step >= one_star_step) {
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 		}
 		// Display score
-		StartCoroutine (score_to (final_score));
+//		StartCoroutine (score_to (final_score));
 		Save (final_score, starnum);
+	}
+
+	private void FailStep ()
+	{
+		cur_step--;
+		if (cur_step < one_star_step)
+			FailLevel ();
+		else {
+			// Logic to recover
+			Transform[] all_gameobjects = gameobjects.GetComponentsInChildren<Transform> (true);
+			int count = 0;
+			float time_count = 1.0f;
+			foreach (Transform objec in all_gameobjects) {
+				count++;
+				if (!objec.gameObject.activeSelf) {
+					// Enable Object one by one
+					StartCoroutine (setObjectActive (objec, time_count));
+					time_count += 0.5f;
+				}
+				if (count == all_gameobjects.Length) {
+					StartCoroutine (setLauncherShadow ());
+					StartCoroutine (activeStep ());
+				}
+			}
+		}
+	}
+
+	IEnumerator setLauncherShadow ()
+	{
+		yield return new WaitForSeconds (1.0f);
+		setShadow ();
+	}
+
+	IEnumerator setObjectActive (Transform go, float time)
+	{
+		yield return new WaitForSeconds (time);
+		go.gameObject.SetActive (true);
+	}
+
+	IEnumerator activeStep ()
+	{
+		// Active Intro
+		Step_Fail_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		yield return new WaitForSeconds (1.0f);
+		Step_Fail_Panel.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		StartCoroutine (activeLaunchers ());
+	}
+
+	IEnumerator activeLaunchers ()
+	{
+		flushData ();
+		step_text.text = "STEP\n" + cur_step;
+		yield return new WaitForSeconds (1.0f);
+		foreach (GameObject Launcher in Launchers) {
+			Launcher.GetComponent<LauncherControl> ().unlock ();
+		}
+
+	}
+
+	private void flushData ()
+	{
+		countForFail = 0;
+		countForLevel = 0;
+		timeContainer = new List<float> ();
 	}
 
 	public void FailLevel ()
@@ -153,7 +232,7 @@ public class Controller : MonoBehaviour
 			yield return new WaitForSeconds (0f);
 		}
 
-		score_text.text = ((int)Mathf.Floor(target * 10)).ToString () + " / 1000";
+		score_text.text = ((int)Mathf.Floor (target * 10)).ToString () + " / 1000";
 	}
 
 	void save_launchers_info ()
@@ -168,7 +247,6 @@ public class Controller : MonoBehaviour
 		}
 		LaunchersInfo li = new LaunchersInfo (amount, positions, zRs, bulletPoses);
 		GameData.gd.saveLaunchersInfo (LevelNum, li);
-
 	}
 
 	void target_numAdd1 ()
@@ -178,24 +256,27 @@ public class Controller : MonoBehaviour
 
 	public void setShadow ()
 	{
-		if (!launcherEnable) {
-			launcherEnable = true;
-			Dictionary<int, LaunchersInfo> launchersinfomap = GameData.gd.launchersinfomap;
-			if (launchersinfomap.ContainsKey (LevelNum)) {
-				for(int i = 0; i < Launchers.Length; i++) {
-					GameObject shadowLauncher = (GameObject)Instantiate (shadowLauncherPrefab);
-					shadowLauncher.transform.position = launchersinfomap [LevelNum].launchers [i].position;
-					shadowLauncher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [LevelNum].launchers [i].zRotation));
-				}
-				foreach (List<Vector3> poslist in launchersinfomap[LevelNum].bulletTracks) {
-					foreach (Vector3 pos in poslist) {
-						GameObject track = (GameObject.Instantiate (shadowDotPrefab));
-						track.transform.position = pos;
-					}
-				}
-					
-			}
+		GameObject[] other = GameObject.FindGameObjectsWithTag ("Shadow");
+		foreach (GameObject temp in other) {
+			Destroy (temp);
 		}
+		Dictionary<int, LaunchersInfo> launchersinfomap = GameData.gd.launchersinfomap;
+		if (launchersinfomap.ContainsKey (LevelNum)) {
+			for (int i = 0; i < Launchers.Length; i++) {
+				GameObject shadowLauncher = (GameObject)Instantiate (shadowLauncherPrefab);
+				shadowLauncher.transform.position = launchersinfomap [LevelNum].launchers [i].position;
+				shadowLauncher.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, launchersinfomap [LevelNum].launchers [i].zRotation));
+			}
+			foreach (List<Vector3> poslist in launchersinfomap[LevelNum].bulletTracks) {
+				foreach (Vector3 pos in poslist) {
+					GameObject track = (GameObject.Instantiate (shadowDotPrefab));
+					track.transform.position = pos;
+				}
+			}
+			bulletPoses = new List<List<Vector3>> ();
+					
+		}
+
 	}
 
 	void setNewLaunchers ()

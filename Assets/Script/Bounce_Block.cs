@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Bounce_Block : MonoBehaviour {
+public class Bounce_Block : MonoBehaviour
+{
 
 	private BoxCollider2D _collider;
 	private Vector3 _center;
@@ -9,7 +10,8 @@ public class Bounce_Block : MonoBehaviour {
 	private Vector3 _normal;
 	private Vector3 _colliderVec;
 
-	void Start(){
+	void Start ()
+	{
 		_collider = GetComponent<BoxCollider2D> ();
 		_center = _collider.bounds.center;
 		_extents = _collider.bounds.extents;
@@ -26,8 +28,18 @@ public class Bounce_Block : MonoBehaviour {
 		_normal = new Vector3 (temp.x, temp.y, 0);
 	}
 
-	void OnCollisionEnter2D(Collision2D other){
-		if(other.gameObject.tag == "Bullet"){
+	void OnCollisionEnter2D (Collision2D other)
+	{
+		if (other.gameObject.tag == "Bullet") {
+			Vector3 ve = other.gameObject.GetComponent<Rigidbody2D> ().velocity;
+			Vector3 vp = 2 * Vector3.Dot (ve, _normal) * _normal - ve;
+			other.gameObject.GetComponent<Rigidbody2D> ().velocity = -1 * vp;
+		}
+	}
+
+	void OnTriggerEnter2D (Collider2D other)
+	{
+		if (other.gameObject.tag == "Bullet") {
 			Vector3 ve = other.gameObject.GetComponent<Rigidbody2D> ().velocity;
 			Vector3 vp = 2 * Vector3.Dot (ve, _normal) * _normal - ve;
 			other.gameObject.GetComponent<Rigidbody2D> ().velocity = -1 * vp;

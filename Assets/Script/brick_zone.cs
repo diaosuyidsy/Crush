@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class brick_zone : MonoBehaviour {
+public class brick_zone : MonoBehaviour
+{
 
 	public bool moving;
 	public Vector2 PatrolArea;
@@ -16,56 +17,72 @@ public class brick_zone : MonoBehaviour {
 	private bool dirRight = false;
 
 
-	void OnCollisionEnter2D(Collision2D other){
-		if(other.gameObject.tag == "Bullet"){
+	void OnCollisionEnter2D (Collision2D other)
+	{
+		if (other.gameObject.tag == "Bullet") {
 			explode = null;
 			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
-			Instantiate (explode, this.transform.position, Quaternion.identity );
+			Instantiate (explode, this.transform.position, Quaternion.identity);
 			Destroy (other.gameObject);
-			Destroy (gameObject);
+//			Destroy (gameObject);
+			gameObject.SetActive (false);
 		}
 	}
 
-	void Start(){
+	void OnTriggerEnter2D (Collider2D other)
+	{
+		if (other.gameObject.tag == "Bullet") {
+			explode = null;
+			explode = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<Controller> ().explode;
+			Instantiate (explode, this.transform.position, Quaternion.identity);
+			Destroy (other.gameObject);
+//			Destroy (gameObject);
+			gameObject.SetActive (false);
+		}
+	}
+
+	void Start ()
+	{
 		pos1 = gameObject.transform.position + new Vector3 (PatrolArea.x, PatrolArea.y);
 		pos2 = gameObject.transform.position - new Vector3 (PatrolArea.x, PatrolArea.y);
-		if(PatrolArea.x > 0){
+		if (PatrolArea.x > 0) {
 			dirHorizontal = true;
-		}else if(PatrolArea.y > 0){
+		} else if (PatrolArea.y > 0) {
 			dirVertical = true;
 		}
 	}
 
-	void Update(){
-		if(moving){
-			if(dirHorizontal){
-				if(transform.position.x >= pos1.x){
+	void Update ()
+	{
+		if (moving) {
+			if (dirHorizontal) {
+				if (transform.position.x >= pos1.x) {
 					dirRight = false;
 				}
 
-				if(transform.position.x <= pos2.x){
+				if (transform.position.x <= pos2.x) {
 					dirRight = true;
 				}
 
-				if(dirRight){
+				if (dirRight) {
 					transform.Translate (Vector3.right * move_speed * Time.deltaTime);
-				}else{
+				} else {
 					transform.Translate (Vector3.left * move_speed * Time.deltaTime);
 				}
 			}
 
-			if(dirVertical){
-				if(transform.position.y >= pos1.y){
+			if (dirVertical) {
+				if (transform.position.y >= pos1.y) {
 					dirUP = false;
 				}
 
-				if(transform.position.y <= pos2.y){
+				if (transform.position.y <= pos2.y) {
 					dirUP = true;
 				}
 
-				if(dirUP){
+				if (dirUP) {
 					transform.Translate (Vector3.up * move_speed * Time.deltaTime);
-				}else{
+				} else {
 					transform.Translate (Vector3.down * move_speed * Time.deltaTime);
 				}
 			}
