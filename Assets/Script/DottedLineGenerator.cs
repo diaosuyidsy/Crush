@@ -16,12 +16,14 @@ public class DottedLineGenerator : MonoBehaviour
 	public int numOfTrajectoryPoints = 30;
 	private List<GameObject> trajectoryPoints;
 	private float bulletSpeed;
-	private float leftScreen = 50;
+	private float leftScreen;
 
 	#endregion
 
 	void Start ()
 	{
+		//Set left screen registration
+		leftScreen = Camera.main.WorldToScreenPoint (GameObject.FindGameObjectWithTag ("Registration").transform.position).x;
 		//get the bullet speed
 		bulletSpeed = GetComponent<LauncherControl> ().bulletSpeed;
 		trajectoryPoints = new List<GameObject> ();
@@ -117,6 +119,10 @@ public class DottedLineGenerator : MonoBehaviour
 		Vector3 wind_extents = Vector3.zero;
 		float temp_dis = distance_to_head_of_launcher;
 		bool first_time_portal = true;
+		bool first_time_met_bound = true;
+		bool first_time_met_Target = true;
+		bool first_time_met_Brick = true;
+//		bool first_time_met_Bounce = true;
 		List<string> methodQueue = new List<string> ();
 		Collider2D hitcollider = null;
 		List<Collider2D> temp = new List<Collider2D> ();
@@ -158,15 +164,28 @@ public class DottedLineGenerator : MonoBehaviour
 			hitcollider = Physics2D.OverlapCircle (pos, 0.4f);
 			if (hitcollider != null && hitcollider.gameObject.tag == "Target") {
 				methodQueue.Add ("metTarget");
+				if (first_time_met_Target) {
+					metTarget (i);
+					first_time_met_Target = false;
+				}
 			}
 			if (hitcollider != null && hitcollider.gameObject.tag == "Brick") {
 				methodQueue.Add ("metBrick");
+				if (first_time_met_Brick) {
+					metBrick (i);
+					first_time_met_Brick = false;
+				}
 			}
 			if (hitcollider != null && hitcollider.gameObject.tag == "Bounce") {
 				if (temp.Count == 0 || temp [temp.Count - 1] != hitcollider) {
 					temp.Add (hitcollider);
 					methodQueue.Add ("metBounce");
 				}
+//				if (first_time_met_Bounce) {
+//					metBounce (i, temp [0], ref pos);
+//					first_time_met_Bounce = false;
+//				}
+
 			}
 			if (hitcollider != null && hitcollider.gameObject.tag == "Portal_Sender") {
 				methodQueue.Add ("metPortalSender");
@@ -190,8 +209,10 @@ public class DottedLineGenerator : MonoBehaviour
 			if (tempos.x <= leftScreen || tempos.x >= Screen.width
 			    || tempos.y >= Screen.height) {
 				methodQueue.Add ("metBound");
-				i--;
-				fTime -= 0.2f;
+				if (first_time_met_bound) {
+					metBound (i, hitcollider, ref pos);
+					first_time_met_bound = false;
+				}
 			}
 
 			trajectoryPoints [i].transform.position = pos;

@@ -22,7 +22,6 @@ public class Controller : MonoBehaviour
 	public int one_star_step = 3;
 	public Text step_text;
 
-	public int MAX_STEP = 9;
 	private int cur_step;
 
 	public GameObject gameobjects;
@@ -61,8 +60,7 @@ public class Controller : MonoBehaviour
 
 	void Start ()
 	{
-		step_text.text += MAX_STEP.ToString ();
-		cur_step = MAX_STEP;
+		cur_step = three_star_step + two_star_step + one_star_step;
 		audiosource = GetComponent<AudioSource> ();
 		bulletPoses = new List<List<Vector3>> ();
 		LevelNum = SceneManager.GetActiveScene ().buildIndex - 1;
@@ -127,16 +125,16 @@ public class Controller : MonoBehaviour
 	{
 		int starnum = 1;
 		Level_Clear_Panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		if (cur_step >= three_star_step) {
+		if (cur_step >= two_star_step + one_star_step) {
 			starnum = 3;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			ThirdStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		} else if (cur_step >= two_star_step) {
+		} else if (cur_step >= one_star_step) {
 			starnum = 2;
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 			SecondStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
-		} else if (cur_step >= one_star_step) {
+		} else if (cur_step >= 0) {
 			FirstStar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 		}
 		// Display score
@@ -147,9 +145,10 @@ public class Controller : MonoBehaviour
 	private void FailStep ()
 	{
 		cur_step--;
-		if (cur_step < one_star_step)
+		if (cur_step <= 0)
 			FailLevel ();
 		else {
+			GameObject.FindGameObjectWithTag ("StepHolder").GetComponent<StepLayout> ().pushFirstChild ();
 			// Logic to recover
 			Transform[] all_gameobjects = gameobjects.GetComponentsInChildren<Transform> (true);
 			int count = 0;
@@ -194,7 +193,7 @@ public class Controller : MonoBehaviour
 	{
 		flushData ();
 		step_text.text = "STEP\n" + cur_step;
-		yield return new WaitForSeconds (1.0f);
+		yield return new WaitForSeconds (0.2f);
 		foreach (GameObject Launcher in Launchers) {
 			Launcher.GetComponent<LauncherControl> ().unlock ();
 		}

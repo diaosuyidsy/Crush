@@ -7,7 +7,7 @@ public class collide : MonoBehaviour
 
 	public GameObject explode;
 
-	private bool enabled = false;
+	private bool enabledd = false;
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
@@ -21,9 +21,9 @@ public class collide : MonoBehaviour
 
 	void OnEnable ()
 	{
-		if (!enabled) {
+		if (!enabledd) {
 			GameObject.FindGameObjectWithTag ("GameManager").SendMessageUpwards ("target_numAdd1");
-			enabled = true;
+			enabledd = true;
 		}
 	}
 }

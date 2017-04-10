@@ -17,6 +17,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 #endregion // Namespaces
 
@@ -34,7 +35,7 @@ public class SceneController : MonoBehaviour
 	// ########################################
 	// Variables
 	// ########################################
-	
+
 	#region Variables
 
 	// Canvas
@@ -43,6 +44,9 @@ public class SceneController : MonoBehaviour
 	public GUIAnimFREE m_BottomLeft_Bar;
 	public GUIAnimFREE m_BottomLeft_Rainbow;
 	public GUIAnimFREE m_LevelIntro_Panel;
+	public Sprite Unmute;
+	public Sprite Muted;
+	public GameObject musicToggle;
 
 	public GameObject primary_game_object;
 
@@ -52,20 +56,19 @@ public class SceneController : MonoBehaviour
 
 
 	#endregion // Variables
-	
+
 	// ########################################
 	// MonoBehaviour Functions
 	// http://docs.unity3d.com/ScriptReference/MonoBehaviour.html
 	// ########################################
-	
+
 	#region MonoBehaviour
-	
+
 	// Awake is called when the script instance is being loaded.
 	// http://docs.unity3d.com/ScriptReference/MonoBehaviour.Awake.html
 	void Awake ()
 	{
-		if(enabled)
-		{
+		if (enabled) {
 			// Set GUIAnimSystemFREE.Instance.m_AutoAnimation to false in Awake() will let you control all GUI Animator elements in the scene via scripts.
 			GUIAnimSystemFREE.Instance.m_AutoAnimation = false;
 		}
@@ -77,27 +80,22 @@ public class SceneController : MonoBehaviour
 	{
 		// Disable all scene switch buttons
 		// http://docs.unity3d.com/Manual/script-GraphicRaycaster.html
-		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable(m_Canvas, true);
+		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable (m_Canvas, true);
 
 		StartCoroutine (MoveInLevelIntro ());
 
 	}
-	
-	// Update is called every frame, if the MonoBehaviour is enabled.
-	// http://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html
-	void Update ()
-	{
-	}
+
 	
 	#endregion // MonoBehaviour
-	
+
 	// ########################################
 	// MoveIn/MoveOut functions
 	// ########################################
-	
+
 	#region MoveIn/MoveOut
 
-	IEnumerator MoveInLevelIntro()
+	IEnumerator MoveInLevelIntro ()
 	{
 		yield return new WaitForSeconds (0.0f);
 
@@ -106,7 +104,7 @@ public class SceneController : MonoBehaviour
 		StartCoroutine (SetupLevel ());
 	}
 
-	IEnumerator SetupLevel()
+	IEnumerator SetupLevel ()
 	{
 		yield return new WaitForSeconds (1.0f);
 
@@ -119,126 +117,125 @@ public class SceneController : MonoBehaviour
 	}
 
 	// MoveIn all primary buttons
-	IEnumerator MoveInPrimaryButtons()
+	IEnumerator MoveInPrimaryButtons ()
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds (1.0f);
 
 		// MoveIn all primary buttons
-		m_BottomLeft_Bar.MoveIn(GUIAnimSystemFREE.eGUIMove.Self);
+		m_BottomLeft_Bar.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 
 		// Enable all scene switch buttons
-		StartCoroutine(EnableAllDemoButtons());
+		StartCoroutine (EnableAllDemoButtons ());
 	}
 
 	// MoveOut all primary buttons
-	public void HideAllGUIs()
+	public void HideAllGUIs ()
 	{
 		m_BottomLeft_Bar.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 	}
 
 	#endregion // MoveIn/MoveOut
-	
+
 	// ########################################
 	// Enable/Disable button functions
 	// ########################################
-	
+
 	#region Enable/Disable buttons
 
 	// Enable/Disable all scene switch Coroutine
-	IEnumerator EnableAllDemoButtons()
+	IEnumerator EnableAllDemoButtons ()
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds (1.0f);
 
 		// Enable all scene switch buttons
 		// http://docs.unity3d.com/Manual/script-GraphicRaycaster.html
-		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable(m_Canvas, true);
+		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable (m_Canvas, true);
 	}
 	
 	// Disable all buttons for a few seconds
-	IEnumerator DisableButtonForSeconds(GameObject GO, float DisableTime)
+	IEnumerator DisableButtonForSeconds (GameObject GO, float DisableTime)
 	{
 		// Disable all buttons
-		GUIAnimSystemFREE.Instance.EnableButton(GO.transform, false);
+		GUIAnimSystemFREE.Instance.EnableButton (GO.transform, false);
 		
-		yield return new WaitForSeconds(DisableTime);
+		yield return new WaitForSeconds (DisableTime);
 		
 		// Enable all buttons
-		GUIAnimSystemFREE.Instance.EnableButton(GO.transform, true);
+		GUIAnimSystemFREE.Instance.EnableButton (GO.transform, true);
 	}
-	
+
 	#endregion // Enable/Disable buttons
-	
+
 	// ########################################
 	// UI Responder functions
 	// ########################################
-	
+
 	#region UI Responder
 
-	public void OnButton_BottomLeft()
+	public void OnButton_BottomLeft ()
 	{
 
 
 		// Disable m_TopLeft_A, m_RightBar_A, m_RightBar_C, m_BottomLeft_A for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_BottomLeft_Bar.gameObject, 0.3f));
+		StartCoroutine (DisableButtonForSeconds (m_BottomLeft_Bar.gameObject, 0.3f));
 
 		// Toggle m_BottomLeft
-		ToggleBottomLeft();
+		ToggleBottomLeft ();
 		
 	}
 
-	public void OnButton_Home()
+	public void OnButton_Home ()
 	{
-		GameData.gd.launchersinfomap = new Dictionary<int, LaunchersInfo>();
+		GameData.gd.launchersinfomap = new Dictionary<int, LaunchersInfo> ();
 		SceneManager.LoadScene ("StartScene");
 	}
 
-	public void OnButton_Restart()
+	public void OnButton_Restart ()
 	{
 		Time.timeScale = 1f;
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 	}
 
-	public void OnButton_Mute()
+	public void OnButton_Mute ()
 	{
 		IsMuted = !IsMuted;
-		if(IsMuted){
+		if (IsMuted) {
+			musicToggle.GetComponent<Image> ().sprite = Muted;
 			GameData.gd.GetComponent<AudioSource> ().Pause ();
-		}else{
+		} else {
+			musicToggle.GetComponent<Image> ().sprite = Unmute;
 			GameData.gd.GetComponent<AudioSource> ().Play ();
 		}
 
 	}
 
-	public void OnButton_NextLevel()
+	public void OnButton_NextLevel ()
 	{
-		if(SceneManager.GetActiveScene ().name != "Level_7")
+		if (SceneManager.GetActiveScene ().name != "Level_7")
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
 	}
-	
+
 	#endregion // UI Responder
-	
+
 	// ########################################
 	// Toggle button functions
 	// ########################################
-	
+
 	#region Toggle Button
 
 	// Toggle TopLeft buttons
 
 	
 	// Toggle BottomLeft buttons
-	void ToggleBottomLeft()
+	void ToggleBottomLeft ()
 	{
 		m_BottomLeft_IsOn = !m_BottomLeft_IsOn;
-		if(m_BottomLeft_IsOn==true)
-		{
+		if (m_BottomLeft_IsOn == true) {
 			// m_BottomLeft_B moves in
-			m_BottomLeft_Rainbow.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		}
-		else
-		{
+			m_BottomLeft_Rainbow.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		} else {
 			// m_BottomLeft_B moves out
-			m_BottomLeft_Rainbow.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+			m_BottomLeft_Rainbow.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		}
 	}
 

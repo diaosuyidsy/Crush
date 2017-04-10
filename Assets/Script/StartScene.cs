@@ -33,7 +33,7 @@ public class StartScene : MonoBehaviour
 	// ########################################
 	// Variables
 	// ########################################
-	
+
 	#region Variables
 
 	// Canvas
@@ -43,26 +43,24 @@ public class StartScene : MonoBehaviour
 	public GUIAnimFREE m_Title1;
 	
 	// GUIAnimFREE object of dialogs
-	public GUIAnimFREE m_Dialog1;
 	public GUIAnimFREE m_Dialog2;
 	public GUIAnimFREE m_Dialog3;
 	public GUIAnimFREE m_Dialog4;
-	
+
 	#endregion // Variables
-	
+
 	// ########################################
 	// MonoBehaviour Functions
 	// http://docs.unity3d.com/ScriptReference/MonoBehaviour.html
 	// ########################################
-	
+
 	#region MonoBehaviour
-	
+
 	// Awake is called when the script instance is being loaded.
 	// http://docs.unity3d.com/ScriptReference/MonoBehaviour.Awake.html
 	void Awake ()
 	{
-		if(enabled)
-		{
+		if (enabled) {
 			// Set GUIAnimSystemFREE.Instance.m_AutoAnimation to false in Awake() will let you control all GUI Animator elements in the scene via scripts.
 			GUIAnimSystemFREE.Instance.m_AutoAnimation = false;
 		}
@@ -73,11 +71,11 @@ public class StartScene : MonoBehaviour
 	void Start ()
 	{
 		// MoveIn m_Title1 m_Title2
-		StartCoroutine(MoveInTitleGameObjects());
+		StartCoroutine (MoveInTitleGameObjects ());
 
 		// Disable all scene switch buttons
 		// http://docs.unity3d.com/Manual/script-GraphicRaycaster.html
-		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable(m_Canvas, false);
+		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable (m_Canvas, false);
 	}
 	
 	// Update is called every frame, if the MonoBehaviour is enabled.
@@ -85,215 +83,202 @@ public class StartScene : MonoBehaviour
 	void Update ()
 	{		
 	}
-	
+
 	#endregion // MonoBehaviour
-	
+
 	// ########################################
 	// MoveIn/MoveOut functions
 	// ########################################
-	
+
 	#region MoveIn/MoveOut
-	
+
 	// Move In m_Title1 and m_Title2
-	IEnumerator MoveInTitleGameObjects()
+	IEnumerator MoveInTitleGameObjects ()
 	{
-		yield return new WaitForSeconds(0.0f);
+		yield return new WaitForSeconds (0.0f);
 		
 		// Move In m_Title1 and m_Title2
-		m_Title1.MoveIn(GUIAnimSystemFREE.eGUIMove.Self);
+		m_Title1.MoveIn (GUIAnimSystemFREE.eGUIMove.Self);
 
 		// MoveIn dialogs
-		StartCoroutine(MoveInPrimaryButtons());
+		StartCoroutine (MoveInPrimaryButtons ());
 	}
 	
 	// MoveIn dialogs
-	IEnumerator MoveInPrimaryButtons()
+	IEnumerator MoveInPrimaryButtons ()
 	{
-		yield return new WaitForSeconds(0.3f);
+		yield return new WaitForSeconds (0.3f);
 		
 		// MoveIn dialogs
-		m_Dialog1.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);		
-		m_Dialog2.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);		
-		m_Dialog3.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);		
-		m_Dialog4.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog2.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);		
+		m_Dialog3.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);		
+		m_Dialog4.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Enable all scene switch buttons
-		StartCoroutine(EnableAllDemoButtons());
+		StartCoroutine (EnableAllDemoButtons ());
 	}
-	
-	public void HideAllGUIs()
+
+	public void HideAllGUIs ()
 	{
 		// MoveOut dialogs
-		m_Dialog1.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog2.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog3.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog4.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// MoveOut m_Title1 and m_Title2
-		StartCoroutine(HideTitleTextMeshes());
+		StartCoroutine (HideTitleTextMeshes ());
 	}
 	
 	// MoveOut m_Title1 and m_Title2
-	IEnumerator HideTitleTextMeshes()
+	IEnumerator HideTitleTextMeshes ()
 	{
-		yield return new WaitForSeconds(1.0f);
-		
+		yield return new WaitForSeconds (0.5f);
+
 		// MoveOut m_Title1 and m_Title2
-		m_Title1.MoveOut(GUIAnimSystemFREE.eGUIMove.Self);
+		m_Title1.MoveOut (GUIAnimSystemFREE.eGUIMove.Self);
 
 		// MoveOut m_TopBar and m_BottomBar
 	}
-	
+
+	IEnumerator MoveOutEverything ()
+	{
+		yield return new WaitForSeconds (0.2f);
+		// MoveOut dialogs
+		if (m_Dialog2.m_MoveOut.Began == false && m_Dialog2.m_MoveOut.Done == false) {
+			// Move m_Dialog2 out
+			m_Dialog2.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		}
+		if (m_Dialog3.m_MoveOut.Began == false && m_Dialog3.m_MoveOut.Done == false) {
+			// Move m_Dialog3 out
+			m_Dialog3.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		}
+		if (m_Dialog4.m_MoveOut.Began == false && m_Dialog4.m_MoveOut.Done == false) {
+			// Move m_Dialog4 out
+			m_Dialog4.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		}
+
+		StartCoroutine (HideTitleTextMeshes ());
+	}
+
 	#endregion // MoveIn/MoveOut
-	
+
 	// ########################################
 	// Enable/Disable button functions
 	// ########################################
-	
+
 	#region Enable/Disable buttons
-	
-	// Enable/Disable all scene switch Coroutine	
-	IEnumerator EnableAllDemoButtons()
+
+	// Enable/Disable all scene switch Coroutine
+	IEnumerator EnableAllDemoButtons ()
 	{
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds (0.2f);
 
 		// Enable all scene switch buttons
 		// http://docs.unity3d.com/Manual/script-GraphicRaycaster.html
-		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable(m_Canvas, true);
+		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable (m_Canvas, true);
 	}
 
 	// Disable a button for a few seconds
-	IEnumerator DisableButtonForSeconds(GameObject GO, float DisableTime)
+	IEnumerator DisableButtonForSeconds (GameObject GO, float DisableTime)
 	{
 		// Disable all buttons
-		GUIAnimSystemFREE.Instance.EnableButton(GO.transform, false);
+		GUIAnimSystemFREE.Instance.EnableButton (GO.transform, false);
 		
-		yield return new WaitForSeconds(DisableTime);
+		yield return new WaitForSeconds (DisableTime);
 		
 		// Enable all buttons
-		GUIAnimSystemFREE.Instance.EnableButton(GO.transform, true);
+		GUIAnimSystemFREE.Instance.EnableButton (GO.transform, true);
 	}
-	
+
 	#endregion // Enable/Disable buttons
-	
+
 	// ########################################
 	// UI Responder functions
 	// ########################################
-	
+
 	#region UI Responder
-	
-	public void OnButton_Dialog1()
-	{
-		// MoveOut m_Dialog1
-		m_Dialog1.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-		
-		// Disable m_Dialog1 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.0f));
-		
-		// Moves m_Dialog1 back to screen
-		StartCoroutine(Dialog1_MoveIn());
-	}
-	
-	public void OnButton_Dialog2()
+
+	public void OnButton_Play ()
 	{
 		// MoveOut m_Dialog2
-		m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog2.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Disable m_Dialog2 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.0f));
+		StartCoroutine (DisableButtonForSeconds (m_Dialog2.gameObject, 2.0f));
+
+		StartCoroutine (MoveOutEverything ());
 		
 		// Moves m_Dialog2 back to screen
-		StartCoroutine(Dialog2_MoveIn());
+		StartCoroutine (Play_MoveIn ());
 	}
-	
-	public void OnButton_Dialog3()
+
+	public void OnButton_Dialog3 ()
 	{
 		// MoveOut m_Dialog3
-		m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog3.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Disable m_Dialog3 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.0f));
+		StartCoroutine (DisableButtonForSeconds (m_Dialog3.gameObject, 2.0f));
 		
 		// Moves m_Dialog3 back to screen
-		StartCoroutine(Dialog3_MoveIn());
+		StartCoroutine (Dialog3_MoveIn ());
 	}
-	
-	public void OnButton_Dialog4()
+
+	public void OnButton_Dialog4 ()
 	{
 		// MoveOut m_Dialog4
-		m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog4.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		
 		// Disable m_Dialog4 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.0f));
-		
+		StartCoroutine (DisableButtonForSeconds (m_Dialog4.gameObject, 2.0f));
+		StartCoroutine (MoveOutEverything ());
+
 		// Moves m_Dialog4 back to screen
-		StartCoroutine(Dialog4_MoveIn());
+		StartCoroutine (Dialog4_MoveIn ());
 	}
-	
-	public void OnButton_MoveOutAllDialogs()
+
+	public void OnButton_MoveOutAllDialogs ()
 	{
 		
 		// Disable m_Dialog1, m_Dialog2, m_Dialog3, m_Dialog4 for a few seconds
-		StartCoroutine(DisableButtonForSeconds(m_Dialog1.gameObject, 2.0f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog2.gameObject, 2.0f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog3.gameObject, 2.0f));
-		StartCoroutine(DisableButtonForSeconds(m_Dialog4.gameObject, 2.0f));
+		StartCoroutine (DisableButtonForSeconds (m_Dialog2.gameObject, 2.0f));
+		StartCoroutine (DisableButtonForSeconds (m_Dialog3.gameObject, 2.0f));
+		StartCoroutine (DisableButtonForSeconds (m_Dialog4.gameObject, 2.0f));
 
-		if(m_Dialog1.m_MoveOut.Began==false && m_Dialog1.m_MoveOut.Done==false)
-		{
-			// Move m_Dialog1 out
-			m_Dialog1.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-			// Move m_Dialog1 back to screen with Coroutines
-			StartCoroutine(Dialog1_MoveIn());
-		}
-		if(m_Dialog2.m_MoveOut.Began==false && m_Dialog2.m_MoveOut.Done==false)
-		{
+
+		if (m_Dialog2.m_MoveOut.Began == false && m_Dialog2.m_MoveOut.Done == false) {
 			// Move m_Dialog2 out
-			m_Dialog2.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+			m_Dialog2.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 			// Move m_Dialog2 back to screen with Coroutines
-			StartCoroutine(Dialog2_MoveIn());
+			StartCoroutine (Play_MoveIn ());
 		}
-		if(m_Dialog3.m_MoveOut.Began==false && m_Dialog3.m_MoveOut.Done==false)
-		{
+		if (m_Dialog3.m_MoveOut.Began == false && m_Dialog3.m_MoveOut.Done == false) {
 			// Move m_Dialog3 out
-			m_Dialog3.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+			m_Dialog3.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 			// Move m_Dialog3 back to screen with Coroutines
-			StartCoroutine(Dialog3_MoveIn());
+			StartCoroutine (Dialog3_MoveIn ());
 		}
-		if(m_Dialog4.m_MoveOut.Began==false && m_Dialog4.m_MoveOut.Done==false)
-		{
+		if (m_Dialog4.m_MoveOut.Began == false && m_Dialog4.m_MoveOut.Done == false) {
 			// Move m_Dialog4 out
-			m_Dialog4.MoveOut(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+			m_Dialog4.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 			// Move m_Dialog4 back to screen with Coroutines
-			StartCoroutine(Dialog4_MoveIn());
+			StartCoroutine (Dialog4_MoveIn ());
 		}
 
 	}
-	
+
 	#endregion // UI Responder
-	
+
 	// ########################################
 	// Move dialog functions
 	// ########################################
-	
+
 	#region Move Dialog
-	
-	// MoveIn m_Dialog1
-	IEnumerator Dialog1_MoveIn()
-	{
-		yield return new WaitForSeconds(1.5f);
-		
-		// Reset children of m_Dialog1
-		m_Dialog1.ResetAllChildren();
-		
-		// Moves m_Dialog1 back to screen
-		m_Dialog1.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
-	}
-	
+
 	// MoveIn m_Dialog2
-	IEnumerator Dialog2_MoveIn()
+	IEnumerator Play_MoveIn ()
 	{
-		yield return new WaitForSeconds(0.8f);
+		yield return new WaitForSeconds (1.1f);
 		
 //		// Reset children of m_Dialog2
 //		m_Dialog2.ResetAllChildren();
@@ -306,27 +291,27 @@ public class StartScene : MonoBehaviour
 	}
 	
 	// MoveIn m_Dialog3
-	IEnumerator Dialog3_MoveIn()
+	IEnumerator Dialog3_MoveIn ()
 	{
-		yield return new WaitForSeconds(1.5f);
+		yield return new WaitForSeconds (1.5f);
 		
 		// Reset children of m_Dialog3
-		m_Dialog3.ResetAllChildren();
+		m_Dialog3.ResetAllChildren ();
 		
 		// Moves m_Dialog1 back to screen
-		m_Dialog3.MoveIn(GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		m_Dialog3.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 	}
 	
 	// MoveIn m_Dialog4
-	IEnumerator Dialog4_MoveIn()
+	IEnumerator Dialog4_MoveIn ()
 	{
-		yield return new WaitForSeconds(0.8f);
+		yield return new WaitForSeconds (1.1f);
 		
 		// Reset children of m_Dialog4
 
 		// Moves m_Dialog1 back to screen to screen
 		SceneManager.LoadScene ("Shop");
 	}
-	
+
 	#endregion // Move Dialog
 }

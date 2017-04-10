@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class ShopSceneController : MonoBehaviour {
+public class ShopSceneController : MonoBehaviour
+{
 
 	// ########################################
 	// Variables
@@ -22,7 +23,7 @@ public class ShopSceneController : MonoBehaviour {
 
 	public GameObject intro_panel_data;
 
-//	private int gold;
+	//	private int gold;
 
 
 
@@ -34,8 +35,7 @@ public class ShopSceneController : MonoBehaviour {
 	// Awake is called when the script instance is being loaded.
 	void Awake ()
 	{
-		if(enabled)
-		{
+		if (enabled) {
 			// Set GUIAnimSystemFREE.Instance.m_AutoAnimation to false in Awake() will let you control all GUI Animator elements in the scene via scripts.
 			GUIAnimSystemFREE.Instance.m_AutoAnimation = false;
 		}
@@ -47,7 +47,7 @@ public class ShopSceneController : MonoBehaviour {
 	{
 		// Disable all scene switch buttons
 		// http://docs.unity3d.com/Manual/script-GraphicRaycaster.html
-		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable(m_Canvas, true);
+		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable (m_Canvas, true);
 
 		// Get the gold num
 //		gold = GameData.gd.Load ().Gold_Coin;
@@ -72,12 +72,12 @@ public class ShopSceneController : MonoBehaviour {
 
 	#region UI Responder
 
-	public void OnButton_ClickHome()
+	public void OnButton_ClickHome ()
 	{
 		SceneManager.LoadScene ("StartScene");
 	}
 
-	public void OnButton_ClickItem()
+	public void OnButton_ClickItem ()
 	{
 		GameObject cur_sel = EventSystem.current.currentSelectedGameObject;
 		// Setup item
@@ -89,32 +89,27 @@ public class ShopSceneController : MonoBehaviour {
 
 		Shop shop = GameData.gd.Load_Shop ();
 		string name_of_item = EventSystem.current.currentSelectedGameObject.GetComponent<ItemData> ().item_name;
-		Debug.Log (name_of_item);
 		intro_panel_data.GetComponent<ItemIntroData> ().is_bought = false;
-		if(shop == null)
-		{
+		if (shop == null) {
 			
-		}else{
-			if(shop.items.ContainsKey (name_of_item))
-			{
+		} else {
+			if (shop.items.ContainsKey (name_of_item)) {
 				intro_panel_data.GetComponent<ItemIntroData> ().is_bought = true;
-				intro_panel_data.GetComponent<ItemIntroData> ().is_equipped = shop.items[name_of_item].is_equipped;
+				intro_panel_data.GetComponent<ItemIntroData> ().is_equipped = shop.items [name_of_item].is_equipped;
 			}
 		}
 		display_intro ();
 	}
 
-	public void OnButton_ClickBuy()
+	public void OnButton_ClickBuy ()
 	{
 		Shop shop = GameData.gd.Load_Shop ();
 		GameObject selected_button = EventSystem.current.currentSelectedGameObject;
-		if(!intro_panel_data.GetComponent<ItemIntroData> ().is_bought)
-		{
+		if (!intro_panel_data.GetComponent<ItemIntroData> ().is_bought) {
 			int price = selected_button.GetComponentInParent<ItemIntroData> ().price;
-			if(canbuy (price))
-			{
+			if (canbuy (price)) {
 				// Unequip last equipped item
-				if(shop != null){
+				if (shop != null) {
 					Item last_equipped = shop.items [shop.last_equipped_item];
 					GameData.gd.Save_Shop_Item (shop.last_equipped_item, last_equipped.price, false);
 				}
@@ -126,10 +121,8 @@ public class ShopSceneController : MonoBehaviour {
 				// TODO: tell the panel that gold has changed;
 
 			}
-		}else
-		{
-			foreach(KeyValuePair<string, Item> i in shop.items)
-			{
+		} else {
+			foreach (KeyValuePair<string, Item> i in shop.items) {
 				GameData.gd.Save_Shop_Item (i.Key, i.Value.price, false);
 			}
 			GameData.gd.Save_Shop_Item (intro_panel_data.GetComponent<ItemIntroData> ().item_name, intro_panel_data.GetComponent<ItemIntroData> ().price, true);
@@ -138,13 +131,12 @@ public class ShopSceneController : MonoBehaviour {
 		// set button not interactable
 		selected_button.GetComponent<Button> ().interactable = false;
 		selected_button.GetComponentInParent<ItemIntroData> ().buy_text.text = "Equipped";
-		selected_button.GetComponentInParent<ItemIntroData> ().buy_text2.text = "Equipped";
 
 		// set the last equipped button interactable
 
 	}
 
-	public void OnButton_ClickCancel()
+	public void OnButton_ClickCancel ()
 	{
 		undisplay_intro ();
 	}
@@ -159,27 +151,23 @@ public class ShopSceneController : MonoBehaviour {
 	#region Toggle Button
 
 	// Toggle TopLeft buttons
-	public void display_intro()
+	public void display_intro ()
 	{
 		intro_panel.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		buy_button.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		cancel_button.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		reset_buy_button ();
-		if(intro_panel_data.GetComponent<ItemIntroData> ().is_bought)
-		{
-			if(intro_panel_data.GetComponent<ItemIntroData> ().is_equipped)
-			{
+		if (intro_panel_data.GetComponent<ItemIntroData> ().is_bought) {
+			if (intro_panel_data.GetComponent<ItemIntroData> ().is_equipped) {
 				buy_button.GetComponent<Button> ().interactable = false;
 				buy_button.GetComponentInParent<ItemIntroData> ().buy_text.text = "Equipped";
-				buy_button.GetComponentInParent<ItemIntroData> ().buy_text2.text = "Equipped";
-			}else{
+			} else {
 				buy_button.GetComponentInParent<ItemIntroData> ().buy_text.text = "Equip";
-				buy_button.GetComponentInParent<ItemIntroData> ().buy_text2.text = "Equip";
 			}
 		}
 	}
 
-	public void undisplay_intro()
+	public void undisplay_intro ()
 	{
 		intro_panel.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 		buy_button.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
@@ -190,7 +178,7 @@ public class ShopSceneController : MonoBehaviour {
 
 	#region helper function
 
-	private bool canbuy(int price)
+	private bool canbuy (int price)
 	{
 		Levels levels = GameData.gd.Load ();
 		if (levels == null)
@@ -199,11 +187,10 @@ public class ShopSceneController : MonoBehaviour {
 		return gold_player_had >= price;
 	}
 
-	private void reset_buy_button()
+	private void reset_buy_button ()
 	{
 		buy_button.GetComponent<Button> ().interactable = true;
 		buy_button.GetComponentInParent<ItemIntroData> ().buy_text.text = "Buy";
-		buy_button.GetComponentInParent<ItemIntroData> ().buy_text2.text = "Buy";
 	}
 
 	#endregion
