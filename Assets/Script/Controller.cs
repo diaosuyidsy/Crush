@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class Controller : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class Controller : MonoBehaviour
 	public GUIAnimFREE Level_Fail_Panel;
 	public GUIAnimFREE Step_Fail_Panel;
 	public GameObject Need_Disable_When_Win;
+	public GUIAnimFREE ReloadCannonButton;
 
 	public AudioClip bounceSound;
 	public AudioClip explosiveSound;
@@ -76,7 +78,12 @@ public class Controller : MonoBehaviour
 	{
 		#if UNITY_EDITOR_OSX
 		if (Input.GetMouseButtonDown (0)) {
-			GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+			if (EventSystem.current.currentSelectedGameObject == null) {
+				GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+			} else if (EventSystem.current.currentSelectedGameObject.tag != "ReloadCannon") {
+				GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+			}
+
 		}
 		#endif
 
@@ -159,26 +166,35 @@ public class Controller : MonoBehaviour
 	IEnumerator FailStep ()
 	{
 		yield return new WaitForSeconds (0f);
+		GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveInGui (0f);
 		cur_step--;
 		if (cur_step <= 0)
 			FailLevel ();
 		else {
-			GameObject.FindGameObjectWithTag ("StepHolder").GetComponent<StepLayout> ().pushFirstChild ();
-			// Logic to recover
-			Transform[] all_gameobjects = gameobjects.GetComponentsInChildren<Transform> (true);
-			int count = 0;
-			float time_count = 1.0f;
-			foreach (Transform objec in all_gameobjects) {
-				count++;
-				if (!objec.gameObject.activeInHierarchy) {
-					// Enable Object one by one
-					StartCoroutine (setObjectActive (objec, time_count));
-					time_count += 0.5f;
-				}
-				if (count == all_gameobjects.Length) {
-					StartCoroutine (setLauncherShadow ());
-					StartCoroutine (activeStep ());
-				}
+			ReloadCannonButton.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+		}
+	}
+
+	public void Recover ()
+	{
+		GameObject.FindGameObjectWithTag ("StepHolder").GetComponent<StepLayout> ().pushFirstChild ();
+
+		ReloadCannonButton.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		// Logic to recover
+		Transform[] all_gameobjects = gameobjects.GetComponentsInChildren<Transform> (true);
+		int count = 0;
+		float time_count = 1.0f;
+		foreach (Transform objec in all_gameobjects) {
+			count++;
+			if (!objec.gameObject.activeInHierarchy) {
+				// Enable Object one by one
+				StartCoroutine (setObjectActive (objec, time_count));
+				time_count += 0.5f;
+			}
+			if (count == all_gameobjects.Length) {
+				StartCoroutine (setLauncherShadow ());
+				StartCoroutine (activeStep ());
 			}
 		}
 	}
