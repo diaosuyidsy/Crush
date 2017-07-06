@@ -68,14 +68,21 @@ public class DottedLineGenerator : MonoBehaviour
 		pos = newPos;
 	}
 
-	public void metPortalSender (int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pStartPosition, ref bool first_time_portal, ref float fTime)
+	//	public void metPortalSender (int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pStartPosition, ref bool first_time_portal, ref float fTime)
+	//	{
+	//		pStartPosition = hitcollider.gameObject.GetComponent <Portal_Block> ().receiver.position;
+	//		temp_dis = 0;
+	//		if (first_time_portal) {
+	//			fTime = 0.1f;
+	//			first_time_portal = false;
+	//		}
+	//	}
+
+	public void metPortalSender (int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pos, ref bool first_time_portal, ref float fTime)
 	{
-		pStartPosition = hitcollider.gameObject.GetComponent <Portal_Block> ().receiver.position;
-		temp_dis = 0;
-		if (first_time_portal) {
-			fTime = 0.1f;
-			first_time_portal = false;
-		}
+		Vector3 temp_distance = pos - hitcollider.gameObject.transform.position;
+		pos = hitcollider.gameObject.GetComponent<Portal_Block> ().receiver.position + temp_distance;
+
 	}
 
 	public void metWindzone (int i, Collider2D hitcollider, ref Vector3 pos, Vector3 bulletVelocity, Vector3 wind_center, Vector3 wind_extents)
@@ -147,7 +154,7 @@ public class DottedLineGenerator : MonoBehaviour
 						hitCount++;
 						break;
 					case "metPortalSender":
-						metPortalSender (i, temp [hitCount], ref temp_dis, ref pStartPosition, ref first_time_portal, ref fTime);
+						metPortalSender (i, temp [hitCount], ref temp_dis, ref pos, ref first_time_portal, ref fTime);
 						hitCount++;
 						break;
 					case "metWindzone":
