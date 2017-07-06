@@ -88,7 +88,11 @@ public class Controller : MonoBehaviour
 		#endif
 
 		foreach (Touch touch in Input.touches) {
-			GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+			if (EventSystem.current.currentSelectedGameObject == null) {
+				GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+			} else if (EventSystem.current.currentSelectedGameObject.tag != "ReloadCannon") {
+				GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+			}
 		}
 	}
 

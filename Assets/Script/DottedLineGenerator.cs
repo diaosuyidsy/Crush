@@ -133,7 +133,7 @@ public class DottedLineGenerator : MonoBehaviour
 			Vector3 pos = new Vector3 (pStartPosition.x + dx - temp_dis * Mathf.Sin (Mathf.Deg2Rad * angle), 
 				              pStartPosition.y + temp_dis * Mathf.Cos (Mathf.Deg2Rad * angle) + dy, 2);
 			if (methodQueue.Count > 0) {
-				int bounceCount = 0;
+				int hitCount = 0;
 				foreach (string method in methodQueue) {
 					switch (method) {
 					case "metTarget":
@@ -143,11 +143,12 @@ public class DottedLineGenerator : MonoBehaviour
 						metBrick (i);
 						break;
 					case "metBounce":
-						metBounce (i, temp [bounceCount], ref pos);
-						bounceCount++;
+						metBounce (i, temp [hitCount], ref pos);
+						hitCount++;
 						break;
 					case "metPortalSender":
-						metPortalSender (i, hitcollider, ref temp_dis, ref pStartPosition, ref first_time_portal, ref fTime);
+						metPortalSender (i, temp [hitCount], ref temp_dis, ref pStartPosition, ref first_time_portal, ref fTime);
+						hitCount++;
 						break;
 					case "metWindzone":
 						metWindzone (i, hitcollider, ref pos, bulletVelocity, wind_center, wind_extents);
@@ -181,14 +182,12 @@ public class DottedLineGenerator : MonoBehaviour
 					temp.Add (hitcollider);
 					methodQueue.Add ("metBounce");
 				}
-//				if (first_time_met_Bounce) {
-//					metBounce (i, temp [0], ref pos);
-//					first_time_met_Bounce = false;
-//				}
-
 			}
 			if (hitcollider != null && hitcollider.gameObject.tag == "Portal_Sender") {
-				methodQueue.Add ("metPortalSender");
+				if (temp.Count == 0 || temp [temp.Count - 1] != hitcollider) {
+					temp.Add (hitcollider);
+					methodQueue.Add ("metPortalSender");
+				}
 			}
 			// If encountered a wind area, bend
 			if (hitcollider != null && hitcollider.gameObject.tag == "Windzone") {
