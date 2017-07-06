@@ -98,8 +98,8 @@ public class DottedLineGenerator : MonoBehaviour
 	{
 		Vector3 tempos = Camera.main.WorldToScreenPoint (pos);
 		// Set tragectory point to reflect
-		if (tempos.x <= leftScreen) {
-			tempos.x = 2 * leftScreen - tempos.x;
+		if (tempos.x <= 0) {
+			tempos.x = -tempos.x;
 		}
 		if (tempos.x >= Screen.width) {
 			tempos.x = 2 * Screen.width - tempos.x;

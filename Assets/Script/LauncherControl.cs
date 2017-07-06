@@ -37,7 +37,37 @@ public class LauncherControl : MonoBehaviour
 		skeletonAnimation.AnimationName = null;
 	}
 
+	void Update ()
+	{
+		foreach (Touch touch in Input.touches) {
+			if (touch.phase == TouchPhase.Began) {
+				OMDo ();
+			} else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) {
+				OMDr ();
+			} else if (touch.phase == TouchPhase.Ended) {
+				OME ();
+			}
+		}
+	}
+
+	#if UNITY_EDITOR_OSX
 	void OnMouseDown ()
+	{
+		OMDo ();
+	}
+
+	void OnMouseDrag ()
+	{
+		OMDr ();
+	}
+
+	void OnMouseUp ()
+	{
+		OME ();
+	}
+	#endif
+
+	void OMDo ()
 	{
 		if (!Lock) {
 			check_click = Time.time;
@@ -61,7 +91,7 @@ public class LauncherControl : MonoBehaviour
 		}
 	}
 
-	void OnMouseDrag ()
+	void OMDr ()
 	{
 		float time_diff = Time.time - check_click;
 		if (time_diff > 0.15f && !Lock) {
@@ -90,7 +120,7 @@ public class LauncherControl : MonoBehaviour
 
 	}
 
-	void OnMouseUp ()
+	void OME ()
 	{
 		float time_diff = Time.time - check_click;
 		if (time_diff <= 0.15f) {

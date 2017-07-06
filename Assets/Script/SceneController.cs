@@ -44,8 +44,10 @@ public class SceneController : MonoBehaviour
 	public GUIAnimFREE m_BottomLeft_Bar;
 	public GUIAnimFREE m_BottomLeft_Rainbow;
 	public GUIAnimFREE m_LevelIntro_Panel;
+	public GUIAnimFREE m_HUD;
 	public Sprite Unmute;
 	public Sprite Muted;
+	public Button MenuToggle;
 	public GameObject musicToggle;
 
 	public GameObject primary_game_object;
@@ -83,7 +85,7 @@ public class SceneController : MonoBehaviour
 		GUIAnimSystemFREE.Instance.SetGraphicRaycasterEnable (m_Canvas, true);
 
 		StartCoroutine (MoveInLevelIntro ());
-
+		StartCoroutine (MoveInGUI (1.0f));
 	}
 
 	
@@ -94,6 +96,36 @@ public class SceneController : MonoBehaviour
 	// ########################################
 
 	#region MoveIn/MoveOut
+
+	public void moveInGui (float moveOutTime)
+	{
+		StartCoroutine (MoveInGUI (moveOutTime));
+	}
+
+
+	IEnumerator MoveInGUI (float moveOutTime)
+	{
+		yield return new WaitForSeconds (0.0f);
+
+		MenuToggle.gameObject.SetActive (false);
+		m_HUD.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+
+//		StartCoroutine (MoveOutGUI (moveOutTime));
+	}
+
+	public void moveOutGui (float moveOutTime)
+	{
+		StartCoroutine (MoveOutGUI (moveOutTime));
+	}
+
+	IEnumerator MoveOutGUI (float moveOutTime)
+	{
+		yield return new WaitForSeconds (moveOutTime);
+
+		m_HUD.MoveOut (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
+		MenuToggle.gameObject.SetActive (true);
+	}
+
 
 	IEnumerator MoveInLevelIntro ()
 	{

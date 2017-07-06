@@ -72,6 +72,19 @@ public class Controller : MonoBehaviour
 //		setNewLaunchers ();
 	}
 
+	void Update ()
+	{
+		#if UNITY_EDITOR_OSX
+		if (Input.GetMouseButtonDown (0)) {
+			GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+		}
+		#endif
+
+		foreach (Touch touch in Input.touches) {
+			GameObject.FindGameObjectWithTag ("SceneController").GetComponent<SceneController> ().moveOutGui (0f);
+		}
+	}
+
 	public void playSound (string what)
 	{
 		if (what == "Bounce") {
@@ -93,7 +106,8 @@ public class Controller : MonoBehaviour
 			countForFail++;
 		if (countForLevel + countForFail >= target_num) {
 			if (countForFail > 0) {
-				FailStep ();
+//				FailStep ();
+				StartCoroutine (FailStep ());
 			} else {
 				CalculateScore ();
 			}
@@ -117,7 +131,7 @@ public class Controller : MonoBehaviour
 		if (finalScore > pass_bar) {
 			PassLevel (finalScore);
 		} else {
-			FailStep ();
+			StartCoroutine (FailStep ());
 		}
 	}
 
@@ -142,8 +156,9 @@ public class Controller : MonoBehaviour
 		Save (final_score, starnum);
 	}
 
-	private void FailStep ()
+	IEnumerator FailStep ()
 	{
+		yield return new WaitForSeconds (0f);
 		cur_step--;
 		if (cur_step <= 0)
 			FailLevel ();
@@ -155,7 +170,7 @@ public class Controller : MonoBehaviour
 			float time_count = 1.0f;
 			foreach (Transform objec in all_gameobjects) {
 				count++;
-				if (!objec.gameObject.activeSelf) {
+				if (!objec.gameObject.activeInHierarchy) {
 					// Enable Object one by one
 					StartCoroutine (setObjectActive (objec, time_count));
 					time_count += 0.5f;
