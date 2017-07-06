@@ -23,12 +23,15 @@ public class Launcher_Rotation : MonoBehaviour
 	void Update ()
 	{
 		foreach (Touch touch in Input.touches) {
-			if (touch.phase == TouchPhase.Began) {
-				OMDo ();
-			} else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) {
-				OMDr ();
-			} else if (touch.phase == TouchPhase.Ended) {
-				OME ();
+			RaycastHit2D hit = Physics2D.Raycast (Camera.main.ScreenToWorldPoint (touch.position), Vector2.zero);
+			if (hit != null && hit.collider != null && hit.collider.gameObject == this.gameObject) {
+				if (touch.phase == TouchPhase.Began) {
+					OMDo ();
+				} else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) {
+					OMDr ();
+				} else if (touch.phase == TouchPhase.Ended) {
+					OME ();
+				}
 			}
 		}
 	}

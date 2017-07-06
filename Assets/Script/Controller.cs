@@ -171,6 +171,7 @@ public class Controller : MonoBehaviour
 		if (cur_step <= 0)
 			FailLevel ();
 		else {
+			ReloadCannonButton.GetComponent<HintPool> ().ChangeHintText ();
 			ReloadCannonButton.MoveIn (GUIAnimSystemFREE.eGUIMove.SelfAndChildren);
 
 		}
