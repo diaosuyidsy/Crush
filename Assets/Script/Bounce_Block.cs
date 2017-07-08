@@ -15,8 +15,10 @@ public class Bounce_Block : MonoBehaviour
 		_collider = GetComponent<BoxCollider2D> ();
 		_center = _collider.bounds.center;
 		_extents = _collider.bounds.extents;
-		Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + _extents.y - _collider.size.y * 0.5f);
-		Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - _extents.y + _collider.size.y * 0.5f);
+//		Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + _extents.y - _collider.size.y * 0.5f);
+//		Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - _extents.y + _collider.size.y * 0.5f);
+		Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + _extents.y);
+		Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - _extents.y);
 		float rotation = transform.localRotation.eulerAngles.z;
 		bool flip = (rotation > 90 && rotation <= 180) ||
 		            (rotation > 270 && rotation < 360) ? true : false;

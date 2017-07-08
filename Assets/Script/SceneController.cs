@@ -243,8 +243,7 @@ public class SceneController : MonoBehaviour
 
 	public void OnButton_NextLevel ()
 	{
-		if (SceneManager.GetActiveScene ().name != "Level_7")
-			SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
 	}
 
 	#endregion // UI Responder

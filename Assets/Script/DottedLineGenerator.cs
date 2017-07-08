@@ -17,6 +17,7 @@ public class DottedLineGenerator : MonoBehaviour
 	private List<GameObject> trajectoryPoints;
 	private float bulletSpeed;
 	private float leftScreen;
+	private float t;
 
 	#endregion
 
@@ -50,13 +51,18 @@ public class DottedLineGenerator : MonoBehaviour
 		trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = false;
 	}
 
-	public void metBounce (int i, Collider2D hitcollider, ref Vector3 pos)
+	public void metBounce (int i, Collider2D hitcollider, ref Vector3 pos, ref bool first_time)
 	{
 		BoxCollider2D boxcollider = (BoxCollider2D)hitcollider;
 		Vector3 _center = boxcollider.bounds.center;
 		Vector3 _extents = boxcollider.bounds.extents;
-		Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + _extents.y - boxcollider.size.y * 0.5f);
-		Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - _extents.y + boxcollider.size.y * 0.5f);
+		float z = hitcollider.gameObject.transform.eulerAngles.z;
+		if (z < 0) {
+			z += 360f;
+		}
+		float upsidedown = ((z > 90 && z < 180) || (z > 270 && z < 360)) ? -1f : 1f;
+		Vector3 tmp1 = new Vector3 (_center.x + _extents.x, _center.y + upsidedown * _extents.y);
+		Vector3 tmp2 = new Vector3 (_center.x - _extents.x, _center.y - upsidedown * _extents.y);
 		float a = tmp2.x - tmp1.x;
 		float b = tmp1.y - tmp2.y;
 		float c = tmp1.x * tmp2.y - tmp2.x * tmp1.y;
@@ -65,18 +71,12 @@ public class DottedLineGenerator : MonoBehaviour
 		Vector3 newPos = new Vector3 ((p * (a * a - b * b) - 2 * b * (a * q + c)) / (a * a + b * b), 
 			                 (q * (b * b - a * a) - 2 * a * (b * p + c)) / (a * a + b * b)); // Calculate the mirro point
 		trajectoryPoints [i].GetComponent<SpriteRenderer> ().enabled = true;
+		if (first_time) {
+			first_time = false;
+			trajectoryPoints [i - 1].GetComponent<SpriteRenderer> ().enabled = false;
+		}
 		pos = newPos;
 	}
-
-	//	public void metPortalSender (int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pStartPosition, ref bool first_time_portal, ref float fTime)
-	//	{
-	//		pStartPosition = hitcollider.gameObject.GetComponent <Portal_Block> ().receiver.position;
-	//		temp_dis = 0;
-	//		if (first_time_portal) {
-	//			fTime = 0.1f;
-	//			first_time_portal = false;
-	//		}
-	//	}
 
 	public void metPortalSender (int i, Collider2D hitcollider, ref float temp_dis, ref Vector3 pos, ref bool first_time_portal, ref float fTime)
 	{
@@ -85,20 +85,42 @@ public class DottedLineGenerator : MonoBehaviour
 
 	}
 
-	public void metWindzone (int i, Collider2D hitcollider, ref Vector3 pos, Vector3 bulletVelocity, Vector3 wind_center, Vector3 wind_extents)
+	//	public void metWindzone (int i, Collider2D hitcollider, ref Vector3 pos, Vector3 bulletVelocity, Vector3 wind_center, Vector3 wind_extents)
+	//	{
+	////		float theta = transform.localRotation.z * 2.5f;
+	//		float theta = transform.eulerAngles.z * Mathf.Deg2Rad;
+	//		float s1 = pos.y - hitcollider.bounds.center.y + hitcollider.bounds.extents.y;
+	//		float a = hitcollider.gameObject.GetComponent<wind_blow> ().offset.x;
+	//
+	//		float vx = bulletVelocity.x;
+	//		float vy = bulletVelocity.y;
+	//		float t1 = s1 / (Mathf.Cos (theta) * Mathf.Sqrt (vx * vx + vy * vy));
+	//		float s2 = 30f * a * t1 * t1 + vx * t1;
+	//
+	//		pos = new Vector3 (pos.x + s2, pos.y, pos.z);
+	//		wind_center = hitcollider.bounds.center;
+	//		wind_extents = hitcollider.bounds.extents;
+	//	}
+
+	public void metWindzone (int i, Collider2D hitcollider, ref Vector3 pos, Vector3 bulletVelocity, Vector3 wind_center, Vector3 wind_extents, ref bool first_time, ref Vector3 wind_zone_enter_pos)
 	{
-		float theta = transform.localRotation.z * 2.5f;
-		float s1 = pos.y - hitcollider.bounds.center.y + hitcollider.bounds.extents.y;
-		float a = hitcollider.gameObject.GetComponent<wind_blow> ().offset.x;
-
-		float vx = bulletVelocity.x;
-		float vy = bulletVelocity.y;
-		float t1 = s1 / (Mathf.Cos (theta) * Mathf.Sqrt (vx * vx + vy * vy));
-		float s2 = 30f * a * t1 * t1 + vx * t1;
-
-		pos = new Vector3 (pos.x + s2, pos.y, pos.z);
+		Vector2 windForce = hitcollider.gameObject.GetComponent<wind_blow> ().offset;
 		wind_center = hitcollider.bounds.center;
 		wind_extents = hitcollider.bounds.extents;
+
+		if (first_time) {
+			first_time = false;
+
+			Vector2 leftP = new Vector2 (wind_center.x - wind_extents.x, wind_center.y - wind_extents.y);
+			Vector2 rightP = new Vector2 (wind_center.x + wind_extents.x, wind_center.y - wind_extents.y);
+			wind_zone_enter_pos = Math3d.LineIntersectionPoint (new Vector2 (pos.x, pos.y), new Vector2 (transform.position.x, transform.position.y), leftP, rightP);
+
+			t = (Vector2.Distance (wind_zone_enter_pos, new Vector2 (pos.x, pos.y)) / Vector3.Distance (pos, trajectoryPoints [i - 1].transform.position)) * 0.1f;
+		}
+		t += 0.1f;
+		float c = wind_zone_enter_pos.x + 0.5f * windForce.x * t * t + bulletVelocity.x;
+		float d = wind_zone_enter_pos.y + 0.5f * windForce.y * t * t + bulletVelocity.y;
+		pos = new Vector3 (c, d);
 	}
 
 	public void metBound (int i, Collider2D hitcollider, ref Vector3 pos)
@@ -129,7 +151,9 @@ public class DottedLineGenerator : MonoBehaviour
 		bool first_time_met_bound = true;
 		bool first_time_met_Target = true;
 		bool first_time_met_Brick = true;
-//		bool first_time_met_Bounce = true;
+		bool first_time_met_Bounce = true;
+		bool first_time_wind_zone = true;
+		Vector3 wind_zone_enter_pos = Vector3.zero;
 		List<string> methodQueue = new List<string> ();
 		Collider2D hitcollider = null;
 		List<Collider2D> temp = new List<Collider2D> ();
@@ -150,7 +174,7 @@ public class DottedLineGenerator : MonoBehaviour
 						metBrick (i);
 						break;
 					case "metBounce":
-						metBounce (i, temp [hitCount], ref pos);
+						metBounce (i, temp [hitCount], ref pos, ref first_time_met_Bounce);
 						hitCount++;
 						break;
 					case "metPortalSender":
@@ -158,7 +182,8 @@ public class DottedLineGenerator : MonoBehaviour
 						hitCount++;
 						break;
 					case "metWindzone":
-						metWindzone (i, hitcollider, ref pos, bulletVelocity, wind_center, wind_extents);
+						metWindzone (i, temp [hitCount], ref pos, bulletVelocity, wind_center, wind_extents, ref first_time_wind_zone, ref wind_zone_enter_pos);
+						hitCount++;
 						break;
 					case "metBound":
 						metBound (i, hitcollider, ref pos);
@@ -198,17 +223,20 @@ public class DottedLineGenerator : MonoBehaviour
 			}
 			// If encountered a wind area, bend
 			if (hitcollider != null && hitcollider.gameObject.tag == "Windzone") {
-				methodQueue.Add ("metWindzone");
+				if (temp.Count == 0 || temp [temp.Count - 1] != hitcollider) {
+					temp.Add (hitcollider);
+					methodQueue.Add ("metWindzone");
+				}
 			}
 
 			// If leave wind area, be normal
-			if (wind_extents.x != 0 && wind_extents.y != 0) {
-				if (wind_center.y + wind_extents.y <= pos.y && wind_center.y + wind_extents.y >= trajectoryPoints [i - 1].transform.position.y) {
-					for (; i < numOfTrajectoryPoints; i++) {
-					}
-					break;
-				}
-			}
+//			if (wind_extents.x != 0 && wind_extents.y != 0) {
+//				if (wind_center.y + wind_extents.y <= pos.y && wind_center.y + wind_extents.y >= trajectoryPoints [i - 1].transform.position.y) {
+//					for (; i < numOfTrajectoryPoints; i++) {
+//					}
+//					break;
+//				}
+//			}
 
 			Vector3 tempos = Camera.main.WorldToScreenPoint (pos);
 //			 Set tragectory point to reflect
